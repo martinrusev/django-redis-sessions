@@ -12,9 +12,9 @@ class SessionStore(SessionBase):
     def __init__(self, *args, **kwargs):
         super(SessionStore, self).__init__(*args, **kwargs)
         self.server = Redis(
-            host=settings.get('SESSION_REDIS_HOST', 'localhost'),
-            port=settings.get('SESSION_REDIS_PORT', 6379),
-            db=settings.get('SESSION_REDIS_DB', 0)
+            host=getattr(settings, 'SESSION_REDIS_HOST', 'localhost'),
+            port=getattr(settings, 'SESSION_REDIS_PORT', 6379),
+            db=getattr(settings, 'SESSION_REDIS_DB', 0)
         )
 
 
