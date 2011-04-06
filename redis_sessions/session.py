@@ -14,7 +14,8 @@ class SessionStore(SessionBase):
         self.server = Redis(
             host=getattr(settings, 'SESSION_REDIS_HOST', 'localhost'),
             port=getattr(settings, 'SESSION_REDIS_PORT', 6379),
-            db=getattr(settings, 'SESSION_REDIS_DB', 0)
+            db=getattr(settings, 'SESSION_REDIS_DB', 0),
+            password=getattr(settings, 'SESSION_REDIS_PASSWORD', None)
         )
 
 
