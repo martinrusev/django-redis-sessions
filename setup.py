@@ -2,13 +2,13 @@ from setuptools import setup, find_packages
 
 setup(
     name='django_redis_sessions',
-    version='0.1.0',
+    version='0.2.0',
     description="Redis Session Backend For Django",
     long_description="",
     keywords='django, sessions,',
-    author='Martin Rusev',
-    author_email='martinmcloud@gmail.com',
-    url='http://github.com/martinrusev/django-redis-sessions',
+    author='Chris Jones',
+    author_email='chris@brack3t.com',
+    url='https://github.com/chrisjones-brack3t/django-redis-sessions',
     license='BSD',
     packages=find_packages(),
     zip_safe=False,
@@ -20,6 +20,4 @@ setup(
         "Framework :: Django",
         "Environment :: Web Environment",
     ],
-) 
-
-
+)
