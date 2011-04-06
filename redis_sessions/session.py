@@ -2,17 +2,25 @@ import time
 from redis import Redis
 from django.utils.encoding import force_unicode
 from django.contrib.sessions.backends.base import SessionBase, CreateError
+from django.conf import settings
 
-def server():
-    return Redis(host="localhost", port=6379, db=0)
 
 class SessionStore(SessionBase):
     """
     Implements Redis database session store.
     """
+    def __init__(self, *args, **kwargs):
+        super(SessionStore, self).__init__(*args, **kwargs)
+        self.server = Redis(
+            host=settings.get('SESSION_REDIS_HOST', 'localhost'),
+            port=settings.get('SESSION_REDIS_PORT', 6379),
+            db=settings.get('SESSION_REDIS_DB', 0)
+        )
+
+
     def load(self):
         try:
-            session_data = server().get(self.session_key)
+            session_data = self.server.get(self.session_key)
             expiry, data = int(session_data[:15]), session_data[15:]
             if expiry < time.time():
                 return {}
@@ -24,7 +32,7 @@ class SessionStore(SessionBase):
 
     def exists(self, session_key):
         try:
-            server()[session_key]
+            self.server[session_key]
         except:
             return False
         return True
@@ -44,14 +52,14 @@ class SessionStore(SessionBase):
             raise CreateError
         data = self.encode(self._get_session(no_load=must_create))
         encoded = '%15d%s' % (int(time.time()) + self.get_expiry_age(), data)
-        server()[self.session_key] = encoded
-    
+        self.server[self.session_key] = encoded
+
     def delete(self, session_key=None):
         if session_key is None:
             if self._session_key is None:
                 return
             session_key = self._session_key
         try:
-            server().delete(session_key)
+            self.server.delete(session_key)
         except:
             pass
