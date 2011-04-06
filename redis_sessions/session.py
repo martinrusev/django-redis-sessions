@@ -9,8 +9,8 @@ class SessionStore(SessionBase):
     """
     Implements Redis database session store.
     """
-    def __init__(self, *args, **kwargs):
-        super(SessionStore, self).__init__(*args, **kwargs)
+    def __init__(self, session_key=None):
+        super(SessionStore, self).__init__(session_key)
         self.server = Redis(
             host=getattr(settings, 'SESSION_REDIS_HOST', 'localhost'),
             port=getattr(settings, 'SESSION_REDIS_PORT', 6379),
@@ -31,11 +31,9 @@ class SessionStore(SessionBase):
             return {}
 
     def exists(self, session_key):
-        try:
-            self.server[session_key]
-        except:
-            return False
-        return True
+        if self.server.get(session_key):
+            return True
+        return False
 
     def create(self):
         while True:
