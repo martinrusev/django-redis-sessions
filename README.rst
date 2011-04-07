@@ -13,6 +13,12 @@ Installation
 
        SESSION_ENGINE = 'redis_sessions.session'
 		
-3. That's it 
-	   
+3. Optional settings::
 
+       SESSION_REDIS_HOST = 'localhost'
+       SESSION_REDIS_PORT = 6379
+       SESSION_REDIS_DB = 0
+       SESSION_REDIS_PASSWORD = 'password'
+		
+4. That's it
+	   
