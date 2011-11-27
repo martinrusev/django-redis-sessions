@@ -1,5 +1,6 @@
-from redis_sessions.session import SessionStore as RedisSession
+from session import SessionStore as RedisSession
 import unittest
+import time
 from nose.tools import eq_
 
 class TestRedisSesssios(unittest.TestCase):
@@ -38,9 +39,28 @@ class TestRedisSesssios(unittest.TestCase):
 
 		eq_(self.redis_session.items(), [('item2', 2), ('item1', 1)])
 
+	def test_expiry(self):
+		
+		self.redis_session.set_expiry(1) 
+		# Test if the expiry age is set correctly
+		eq_(self.redis_session.get_expiry_age(), 1)
+		
+		self.redis_session['key'] = 'expiring_value'
+		self.redis_session.save()
+		key = self.redis_session.session_key
+		
+		eq_(self.redis_session.exists(key), True)
+		
+		time.sleep(2)
+		eq_(self.redis_session.exists(key), False)
+
  
 if __name__ == '__main__':
 	import os
 	os.environ['DJANGO_SETTINGS_MODULE'] = 'settings' 
 	unittest.main()
+
+# To run the test suite
+# pip install nose
+# python tests.py -v
 

@@ -1,9 +1,8 @@
 import time
-from redis import Redis
+import redis
 from django.utils.encoding import force_unicode
 from django.contrib.sessions.backends.base import SessionBase, CreateError
 from django.conf import settings
-
 
 class SessionStore(SessionBase):
 	"""
@@ -11,7 +10,7 @@ class SessionStore(SessionBase):
 	"""
 	def __init__(self, session_key=None):
 		super(SessionStore, self).__init__(session_key)
-		self.server = Redis(
+		self.server = redis.StrictRedis(
 			host=getattr(settings, 'SESSION_REDIS_HOST', 'localhost'),
 			port=getattr(settings, 'SESSION_REDIS_PORT', 6379),
 			db=getattr(settings, 'SESSION_REDIS_DB', 0),
