@@ -21,11 +21,7 @@ class SessionStore(SessionBase):
 	def load(self):
 		try:
 			session_data = self.server.get(self.session_key)
-			expiry, data = int(session_data[:15]), session_data[15:]
-			if expiry < time.time():
-				return {}
-			else:
-				return self.decode(force_unicode(data))
+			return self.decode(force_unicode(session_data))
 		except:
 			self.create()
 			return {}
@@ -52,10 +48,8 @@ class SessionStore(SessionBase):
 		if must_create and self.exists(self.session_key):
 			raise CreateError
 		data = self.encode(self._get_session(no_load=must_create))
-		expire = int(time.time()) + self.get_expiry_age()
-		encoded = '%15d%s' % (expire, data)
 		
-		self.server.set(self.session_key, encoded)
+		self.server.set(self.session_key, data)
 		self.server.expire(self.session_key, self.get_expiry_age())
 
 
