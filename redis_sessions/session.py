@@ -52,11 +52,10 @@ class SessionStore(SessionBase):
 		if must_create and self.exists(self.session_key):
 			raise CreateError
 		data = self.encode(self._get_session(no_load=must_create))
-		expire = int(time.time()) + self.get_expiry_age()
-		encoded = '%15d%s' % (expire, data)
+		encoded = '%15d%s' % (self.get_expiry_age(), data)
 		
 		self.server.set(self.session_key, encoded)
-		self.server.expire(self.session_key, expire)
+		self.server.expire(self.session_key, self.get_expiry_age())
 
 
 	def delete(self, session_key=None):
