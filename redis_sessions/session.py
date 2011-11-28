@@ -1,4 +1,3 @@
-import time
 import redis
 from django.utils.encoding import force_unicode
 from django.contrib.sessions.backends.base import SessionBase, CreateError
