@@ -54,7 +54,17 @@ class TestRedisSesssios(unittest.TestCase):
 		time.sleep(2)
 		eq_(self.redis_session.exists(key), False)
 
- 
+	#def test_load(self):
+		
+		#self.redis_session.set_expiry(60)
+		#self.redis_session['item1'], self.redis_session['item2'] = 1,2
+		#self.redis_session.save()
+		
+		#session_data =  self.redis_session.server.get(self.redis_session.session_key)
+		#expiry, data = int(session_data[:15]), session_data[15:]
+
+
+
 if __name__ == '__main__':
 	import os
 	os.environ['DJANGO_SETTINGS_MODULE'] = 'settings' 
