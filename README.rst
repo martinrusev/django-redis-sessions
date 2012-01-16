@@ -7,7 +7,7 @@ Redis database backend for your sessions
 Installation
 ------------
 
-1. Download the tarball and run ``python setup.py install``,
+1. Run ``pip install django-redis-sessions`` or alternatively  download the tarball and run ``python setup.py install``,
 
 2. Set ``redis_sessions.session`` as your session engine, like so::
 
