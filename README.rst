@@ -22,3 +22,4 @@ Installation
 		
 4. That's it
 	   
+See: http://pypi.python.org/pypi/django-redis-sessions

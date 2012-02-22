@@ -27,10 +27,7 @@ class SessionStore(SessionBase):
 
 
 	def exists(self, session_key):
-		if self.server.get(session_key):
-			return True
-		return False
-
+		return self.server.exists(session_key)
 
 	def create(self):
 		while True:
