@@ -12,7 +12,7 @@ setup(
     license='BSD',
     packages=find_packages(),
     zip_safe=False,
-    install_requires=['setuptools','redis',],
+    install_requires=['setuptools', 'redis', ],
     include_package_data=True,
     classifiers=[
         "Programming Language :: Python",
@@ -20,6 +20,4 @@ setup(
         "Framework :: Django",
         "Environment :: Web Environment",
     ],
-) 
-
-
+)
