@@ -15,10 +15,10 @@ class TestRedisSesssios(unittest.TestCase):
         eq_(self.redis_session.modified, True)
         eq_(self.redis_session['test'], 'test_me')
 
-    def test_save_delete(self):
+    def test_save_and_delete(self):
         self.redis_session['key'] = 'value'
         self.redis_session.save()
-        self.redis_session.exists(self.redis_session.session_key)
+        eq_(self.redis_session.exists(self.redis_session.session_key), True)
         self.redis_session.delete(self.redis_session.session_key)
         eq_(self.redis_session.exists(self.redis_session.session_key), False)
 
@@ -44,6 +44,13 @@ class TestRedisSesssios(unittest.TestCase):
         eq_(self.redis_session.exists(key), True)
         time.sleep(2)
         eq_(self.redis_session.exists(key), False)
+
+    def test_save_and_load(self):
+        self.redis_session.set_expiry(60)
+        self.redis_session.setdefault('item_test', 8)
+        self.redis_session.save()
+        session_data = self.redis_session.load()
+        eq_(session_data.get('item_test'), 8)
 
     #def test_load(self):
         #self.redis_session.set_expiry(60)
