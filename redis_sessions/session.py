@@ -19,14 +19,14 @@ class SessionStore(SessionBase):
 
     def load(self):
         try:
-            session_data = self.server.get(self.session_key)
+            session_data = self.server.get(self.get_real_stored_key(self.session_key))
             return self.decode(force_unicode(session_data))
         except:
             self.create()
             return {}
 
     def exists(self, session_key):
-        return self.server.exists(session_key)
+        return self.server.exists(self.get_real_stored_key(session_key))
 
     def create(self):
         while True:
@@ -42,8 +42,8 @@ class SessionStore(SessionBase):
         if must_create and self.exists(self.session_key):
             raise CreateError
         data = self.encode(self._get_session(no_load=must_create))
-        self.server.set(self.session_key, data)
-        self.server.expire(self.session_key, self.get_expiry_age())
+        self.server.set(self.get_real_stored_key(self.session_key), data)
+        self.server.expire(self.get_real_stored_key(self.session_key), self.get_expiry_age())
 
     def delete(self, session_key=None):
         if session_key is None:
@@ -51,6 +51,14 @@ class SessionStore(SessionBase):
                 return
             session_key = self._session_key
         try:
-            self.server.delete(session_key)
+            self.server.delete(self.get_real_stored_key(session_key))
         except:
             pass
+
+    def get_real_stored_key(self, session_key):
+        """Return the real key name in redis storage
+        @return string
+        """
+        prefix = getattr(settings, 'SESSION_REDIS_PREFIX', None)
+        key = "{}:{}".format(prefix, session_key) if prefix else session_key
+        return key
