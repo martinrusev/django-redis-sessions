@@ -12,7 +12,7 @@ setup(
     license='BSD',
     packages=find_packages(),
     zip_safe=False,
-    install_requires=['setuptools', 'redis', ],
+    install_requires=['redis>=2.4.10'],
     include_package_data=True,
     classifiers=[
         "Programming Language :: Python",
