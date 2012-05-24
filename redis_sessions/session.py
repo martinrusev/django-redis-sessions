@@ -60,6 +60,7 @@ class SessionStore(SessionBase):
         """Return the real key name in redis storage
         @return string
         """
-        prefix = getattr(settings, 'SESSION_REDIS_PREFIX', None)
-        key = "{}:{}".format(prefix, session_key) if prefix else session_key
-        return key
+        prefix = getattr(settings, 'SESSION_REDIS_PREFIX', '')
+        if not prefix:
+            return session_key
+        return ':'.join([prefix, session_key])
