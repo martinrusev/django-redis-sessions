@@ -1,3 +1,6 @@
 *.pyc
 _build/
+build
+dist
+django_redis_sessions.egg-info
 .idea
