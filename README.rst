@@ -9,6 +9,8 @@ Installation
 
 1. Run ``pip install django-redis-sessions`` or alternatively  download the tarball and run ``python setup.py install``,
 
+For Django < 1.4 run ``pip install django-redis-sessions==0.3``
+
 2. Set ``redis_sessions.session`` as your session engine, like so::
 
        SESSION_ENGINE = 'redis_sessions.session'
