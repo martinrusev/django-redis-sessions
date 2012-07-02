@@ -43,8 +43,11 @@ class SessionStore(SessionBase):
         if must_create and self.exists(self._get_or_create_session_key()):
             raise CreateError
         data = self.encode(self._get_session(no_load=must_create))
-        self.server.set(self.get_real_stored_key(self._get_or_create_session_key()), data)
-        self.server.expire(self.get_real_stored_key(self._get_or_create_session_key()), self.get_expiry_age())
+        if redis.VERSION[0] >= 2:
+            self.server.setex(self.get_real_stored_key(self._get_or_create_session_key()), self.get_expiry_age(), data)
+        else:
+            self.server.set(self.get_real_stored_key(self._get_or_create_session_key()), data)
+            self.server.expire(self.get_real_stored_key(self._get_or_create_session_key()), self.get_expiry_age())
 
     def delete(self, session_key=None):
         if session_key is None:
