@@ -10,13 +10,26 @@ class SessionStore(SessionBase):
     """
     def __init__(self, session_key=None):
         super(SessionStore, self).__init__(session_key)
-        self.server = redis.StrictRedis(
-            host=getattr(settings, 'SESSION_REDIS_HOST', 'localhost'),
-            port=getattr(settings, 'SESSION_REDIS_PORT', 6379),
-            db=getattr(settings, 'SESSION_REDIS_DB', 0),
-            password=getattr(settings, 'SESSION_REDIS_PASSWORD', None)
-        )
-
+        
+        try:
+            unix_socket_path=getattr(settings, 'SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH', None)
+        except AttributeError:
+            unix_socket_path = None
+        
+        if unix_socket_path is None:
+            self.server = redis.StrictRedis(
+                host=getattr(settings, 'SESSION_REDIS_HOST', 'localhost'),
+                port=getattr(settings, 'SESSION_REDIS_PORT', 6379),
+                db=getattr(settings, 'SESSION_REDIS_DB', 0),
+                password=getattr(settings, 'SESSION_REDIS_PASSWORD', None),
+            )
+        else:
+            self.server = redis.StrictRedis(
+                unix_socket_path=getattr(settings, 'SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH', '/var/run/redis/redis.sock'),
+                db=getattr(settings, 'SESSION_REDIS_DB', 0),
+                password=getattr(settings, 'SESSION_REDIS_PASSWORD', None),
+            )
+        
     def load(self):
         try:
             session_data = self.server.get(self.get_real_stored_key(self._get_or_create_session_key()))
