@@ -1,6 +1,11 @@
 *.pyc
+__pycache__
 _build/
+.coverage
 build
+env*
 dist
-django_redis_sessions.egg-info
+*.egg-info
+*.egg
 .idea
+*.sublime*
