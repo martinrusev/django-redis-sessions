@@ -1,7 +1,26 @@
 import redis
-from django.utils.encoding import force_unicode
+try:
+    from django.utils.encoding import force_unicode
+except ImportError:  # Python 3.*
+    from django.utils.encoding import force_text as force_unicode
 from django.contrib.sessions.backends.base import SessionBase, CreateError
-from django.conf import settings
+from redis_sessions import settings
+
+
+# Avoid new redis connection on each request
+if settings.SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH is None:
+    redis_server = redis.StrictRedis(
+        host=settings.SESSION_REDIS_HOST,
+        port=settings.SESSION_REDIS_PORT,
+        db=settings.SESSION_REDIS_DB,
+        password=settings.SESSION_REDIS_PASSWORD
+    )
+else:
+    redis_server = redis.StrictRedis(
+        unix_socket_path=settings.SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH,
+        db=settings.SESSION_REDIS_DB,
+        password=settings.SESSION_REDIS_PASSWORD,
+    )
 
 
 class SessionStore(SessionBase):
@@ -10,29 +29,14 @@ class SessionStore(SessionBase):
     """
     def __init__(self, session_key=None):
         super(SessionStore, self).__init__(session_key)
-        
-        try:
-            unix_socket_path=getattr(settings, 'SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH', None)
-        except AttributeError:
-            unix_socket_path = None
-        
-        if unix_socket_path is None:
-            self.server = redis.StrictRedis(
-                host=getattr(settings, 'SESSION_REDIS_HOST', 'localhost'),
-                port=getattr(settings, 'SESSION_REDIS_PORT', 6379),
-                db=getattr(settings, 'SESSION_REDIS_DB', 0),
-                password=getattr(settings, 'SESSION_REDIS_PASSWORD', None),
-            )
-        else:
-            self.server = redis.StrictRedis(
-                unix_socket_path=getattr(settings, 'SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH', '/var/run/redis/redis.sock'),
-                db=getattr(settings, 'SESSION_REDIS_DB', 0),
-                password=getattr(settings, 'SESSION_REDIS_PASSWORD', None),
-            )
-        
+
+        self.server = redis_server
+
     def load(self):
         try:
-            session_data = self.server.get(self.get_real_stored_key(self._get_or_create_session_key()))
+            session_data = self.server.get(
+                self.get_real_stored_key(self._get_or_create_session_key())
+            )
             return self.decode(force_unicode(session_data))
         except:
             self.create()
@@ -44,7 +48,7 @@ class SessionStore(SessionBase):
     def create(self):
         while True:
             self._session_key = self._get_new_session_key()
-            
+
             try:
                 self.save(must_create=True)
             except CreateError:
@@ -57,10 +61,20 @@ class SessionStore(SessionBase):
             raise CreateError
         data = self.encode(self._get_session(no_load=must_create))
         if redis.VERSION[0] >= 2:
-            self.server.setex(self.get_real_stored_key(self._get_or_create_session_key()), self.get_expiry_age(), data)
+            self.server.setex(
+                self.get_real_stored_key(self._get_or_create_session_key()),
+                self.get_expiry_age(),
+                data
+            )
         else:
-            self.server.set(self.get_real_stored_key(self._get_or_create_session_key()), data)
-            self.server.expire(self.get_real_stored_key(self._get_or_create_session_key()), self.get_expiry_age())
+            self.server.set(
+                self.get_real_stored_key(self._get_or_create_session_key()),
+                data
+            )
+            self.server.expire(
+                self.get_real_stored_key(self._get_or_create_session_key()),
+                self.get_expiry_age()
+            )
 
     def delete(self, session_key=None):
         if session_key is None:
@@ -76,7 +90,7 @@ class SessionStore(SessionBase):
         """Return the real key name in redis storage
         @return string
         """
-        prefix = getattr(settings, 'SESSION_REDIS_PREFIX', '')
+        prefix = settings.SESSION_REDIS_PREFIX
         if not prefix:
             return session_key
         return ':'.join([prefix, session_key])
