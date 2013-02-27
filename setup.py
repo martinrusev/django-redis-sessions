@@ -15,7 +15,7 @@ setup(
     long_description=long_description(),
     keywords='django, sessions,',
     author='Martin Rusev',
-    author_email='martinmcloud@gmail.com',
+    author_email='martinrusev@live.com',
     url='http://github.com/martinrusev/django-redis-sessions',
     license='BSD',
     packages=packages,
