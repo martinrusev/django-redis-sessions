@@ -11,8 +11,8 @@ packages = ['redis_sessions']
 setup(
     name='django-redis-sessions',
     version=__version__,
-    description=read("README.rst"),
-    long_description=long_description(),
+    description= "Redis Session Backend For Django",
+    long_description=read("README.rst"),
     keywords='django, sessions,',
     author='Martin Rusev',
     author_email='martinrusev@live.com',
