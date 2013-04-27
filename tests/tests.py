@@ -4,6 +4,10 @@ import time
 from nose.tools import eq_
 
 
+##  Dev
+import redis
+import timeit
+
 redis_session = SessionStore()
 
 
@@ -56,10 +60,34 @@ def test_save_and_load():
     session_data = redis_session.load()
     eq_(session_data.get('item_test'), 8)
 
-def test_with_url_config():
-    url = settings.SESSION_REDIS_URL
-    eq_()
+def test_with_redis_url_config():
+    settings.SESSION_REDIS_URL = 'redis://localhost:1'
 
+    from redis_sessions.session import SessionStore
+
+    redis_session = SessionStore()
+    server = redis_session.server
+    host = server.connection_pool.connection_kwargs.get('host')
+    port = server.connection_pool.connection_kwargs.get('port')
+
+    eq_(host, 'localhost')
+    eq_(port, 6379)
+    eq_(db, 1)
+
+def test_with_unix_url_config():
+    pass
+    # settings.SESSION_REDIS_URL = 'redis://localhost:1'
+
+    # from redis_sessions.session import SessionStore
+
+    # redis_session = SessionStore()
+    # server = redis_session.server
+    # host = server.connection_pool.connection_kwargs.get('host')
+    # port = server.connection_pool.connection_kwargs.get('port')
+
+    # eq_(host, 'localhost')
+    # eq_(port, 6379)
+    # eq_(db, 1)
 # def test_load():
 #     redis_session.set_expiry(60)
 #     redis_session['item1'], redis_session['item2'] = 1,2
