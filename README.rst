@@ -34,3 +34,7 @@ See: `django-redis-sessions <http://pypi.python.org/pypi/django-redis-sessions>`
 
     pip install nose
     nosetests
+
+5. Redis::
+    pip install redis
+    pip install hiredis (Optional)

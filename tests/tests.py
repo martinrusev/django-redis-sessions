@@ -1,4 +1,5 @@
 from redis_sessions.session import SessionStore
+from redis_sessions import settings
 import time
 from nose.tools import eq_
 
@@ -54,6 +55,10 @@ def test_save_and_load():
     redis_session.save()
     session_data = redis_session.load()
     eq_(session_data.get('item_test'), 8)
+
+def test_with_url_config():
+    url = settings.SESSION_REDIS_URL
+    eq_()
 
 # def test_load():
 #     redis_session.set_expiry(60)
