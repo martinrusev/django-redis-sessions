@@ -79,18 +79,26 @@ def test_with_redis_url_config():
 def test_with_unix_url_config():
     pass
 
-    settings.SESSION_REDIS_URL = 'unix:///tmp/redis_session.sock'
+    # Uncomment this in `redis.conf`:
+    # 
+    # unixsocket /tmp/redis.sock
+    # unixsocketperm 755
 
-    # from redis_sessions.session import SessionStore
+    settings.SESSION_REDIS_URL = 'unix:///tmp/redis.sock'
 
-    # redis_session = SessionStore()
-    # server = redis_session.server
-    # host = server.connection_pool.connection_kwargs.get('host')
-    # port = server.connection_pool.connection_kwargs.get('port')
+    from redis_sessions.session import SessionStore
 
-    # eq_(host, 'localhost')
-    # eq_(port, 6379)
-    # eq_(db, 1)
+    redis_session = SessionStore()
+    server = redis_session.server
+    
+    host = server.connection_pool.connection_kwargs.get('host')
+    port = server.connection_pool.connection_kwargs.get('port')
+    db = server.connection_pool.connection_kwargs.get('db')
+
+    eq_(host, 'localhost')
+    eq_(port, 6379)
+    eq_(db, 0)
+
 # def test_load():
 #     redis_session.set_expiry(60)
 #     redis_session['item1'], redis_session['item2'] = 1,2
