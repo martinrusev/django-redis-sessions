@@ -4,24 +4,31 @@ try:
 except ImportError:  # Python 3.*
     from django.utils.encoding import force_text as force_unicode
 from django.contrib.sessions.backends.base import SessionBase, CreateError
+from django.utils.importlib import import_module
 from redis_sessions import settings
 
 
-# Avoid new redis connection on each request
-
-
-if settings.SESSION_REDIS_URL is not None:
+# Use single global Redis instance to avoid new redis connection on each request
+if settings.SESSION_REDIS_CONNECTION_POOL is not None:
+    try:
+        mod_name, attr = settings.SESSION_REDIS_CONNECTION_POOL.rsplit('.', 1)
+        module = import_module(mod_name)
+        connection_pool = getattr(module, attr)
+    except (ValueError, ImportError, AttributeError) as e:
+        raise ValueError(
+            'Error importing connection pool %s.%s: "%s"' % (mod_name, attr, e))
+    else:
+        redis_server = redis.StrictRedis(connection_pool=connection_pool)
+elif settings.SESSION_REDIS_URL is not None:
     redis_server = redis.StrictRedis.from_url(settings.SESSION_REDIS_URL)
 elif settings.SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH is None:
-    
     redis_server = redis.StrictRedis(
         host=settings.SESSION_REDIS_HOST,
         port=settings.SESSION_REDIS_PORT,
         db=settings.SESSION_REDIS_DB,
-        password=settings.SESSION_REDIS_PASSWORD
+        password=settings.SESSION_REDIS_PASSWORD,
     )
 else:
-
     redis_server = redis.StrictRedis(
         unix_socket_path=settings.SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH,
         db=settings.SESSION_REDIS_DB,
