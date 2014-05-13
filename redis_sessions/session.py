@@ -1,4 +1,5 @@
 import redis
+
 try:
     from django.utils.encoding import force_unicode
 except ImportError:  # Python 3.*
@@ -9,8 +10,14 @@ from redis_sessions import settings
 
 # Avoid new redis connection on each request
 
+if settings.SESSION_REDIS_SENTINEL_LIST is not None:
+    from redis.sentinel import Sentinel
 
-if settings.SESSION_REDIS_URL is not None:
+    redis_server = Sentinel(settings.SESSION_REDIS_SENTINEL_LIST, socket_timeout=0.1) \
+                    .master_for(settings.SESSION_REDIS_SENTINEL_MASTER_ALIAS, socket_timeout=0.1)
+
+elif settings.SESSION_REDIS_URL is not None:
+
     redis_server = redis.StrictRedis.from_url(settings.SESSION_REDIS_URL)
 elif settings.SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH is None:
     
