@@ -20,7 +20,7 @@ elif settings.SESSION_REDIS_URL is not None:
 
     redis_server = redis.StrictRedis.from_url(settings.SESSION_REDIS_URL)
 elif settings.SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH is None:
-    
+
     redis_server = redis.StrictRedis(
         host=settings.SESSION_REDIS_HOST,
         port=settings.SESSION_REDIS_PORT,
@@ -107,3 +107,10 @@ class SessionStore(SessionBase):
         if not prefix:
             return session_key
         return ':'.join([prefix, session_key])
+
+    def get_expiry_age(self, **kwargs):
+        """ According to http://redis.io/commands/SETEX Redis uses integer
+            value for number of seconds
+        """
+        age = super(SessionStore, self).get_expiry_age(**kwargs)
+        return int(age)
