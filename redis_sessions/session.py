@@ -14,7 +14,9 @@ if settings.SESSION_REDIS_SENTINEL_LIST is not None:
     from redis.sentinel import Sentinel
 
     redis_server = Sentinel(settings.SESSION_REDIS_SENTINEL_LIST, socket_timeout=0.1) \
-                    .master_for(settings.SESSION_REDIS_SENTINEL_MASTER_ALIAS, socket_timeout=0.1)
+                    .master_for(settings.SESSION_REDIS_SENTINEL_MASTER_ALIAS, 
+                                socket_timeout=0.1, 
+                                db=settings.get('SESSION_REDIS_DB', 0))
 
 elif settings.SESSION_REDIS_URL is not None:
 
