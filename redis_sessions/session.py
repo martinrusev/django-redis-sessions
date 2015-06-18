@@ -22,7 +22,7 @@ elif settings.SESSION_REDIS_URL is not None:
 
     redis_server = redis.StrictRedis.from_url(settings.SESSION_REDIS_URL)
 elif settings.SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH is None:
-    
+
     redis_server = redis.StrictRedis(
         host=settings.SESSION_REDIS_HOST,
         port=settings.SESSION_REDIS_PORT,
@@ -57,7 +57,11 @@ class SessionStore(SessionBase):
             self.create()
             return {}
 
-    def exists(self, session_key):
+    def exists(self, session_key=None):
+        if session_key is None:
+            if self.session_key is None:
+                return False
+            session_key = self.session_key
         return self.server.exists(self.get_real_stored_key(session_key))
 
     def create(self):
