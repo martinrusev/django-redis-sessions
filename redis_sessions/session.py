@@ -54,7 +54,7 @@ class SessionStore(SessionBase):
             )
             return self.decode(force_unicode(session_data))
         except:
-            self.create()
+            self._session_key = None
             return {}
 
     def exists(self, session_key):
@@ -67,11 +67,14 @@ class SessionStore(SessionBase):
             try:
                 self.save(must_create=True)
             except CreateError:
+                # Key wasn't unique. Try again.
                 continue
             self.modified = True
             return
 
     def save(self, must_create=False):
+        if self.session_key is None:
++            return self.create()
         if must_create and self.exists(self._get_or_create_session_key()):
             raise CreateError
         data = self.encode(self._get_session(no_load=must_create))
