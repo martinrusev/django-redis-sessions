@@ -2,6 +2,9 @@ django-redis-sessions
 =======================
 Redis database backend for your sessions
 
+.. image:: https://travis-ci.org/martinrusev/django-redis-sessions.svg?branch=master
+    :target: https://travis-ci.org/martinrusev/django-redis-sessions
+
 ------------
 Installation
 ------------
