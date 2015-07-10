@@ -74,7 +74,7 @@ class SessionStore(SessionBase):
 
     def save(self, must_create=False):
         if self.session_key is None:
-+            return self.create()
+            return self.create()
         if must_create and self.exists(self._get_or_create_session_key()):
             raise CreateError
         data = self.encode(self._get_session(no_load=must_create))
