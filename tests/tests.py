@@ -1,7 +1,7 @@
 from redis_sessions.session import SessionStore
 from redis_sessions import settings
 import time
-from nose.tools import eq_
+from nose.tools import eq_, assert_false
 
 
 ##  Dev
@@ -16,6 +16,15 @@ def test_modify_and_keys():
     redis_session['test'] = 'test_me'
     eq_(redis_session.modified, True)
     eq_(redis_session['test'], 'test_me')
+
+
+
+def test_session_load_does_not_create_record():
+    session = SessionStore('someunknownkey')
+    session.load()
+
+    eq_(redis_session.exists(redis_session.session_key), False)
+
 
 
 def test_save_and_delete():
