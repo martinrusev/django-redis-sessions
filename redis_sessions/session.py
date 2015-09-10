@@ -14,15 +14,15 @@ if settings.SESSION_REDIS_SENTINEL_LIST is not None:
     from redis.sentinel import Sentinel
 
     redis_server = Sentinel(settings.SESSION_REDIS_SENTINEL_LIST, socket_timeout=0.1) \
-                    .master_for(settings.SESSION_REDIS_SENTINEL_MASTER_ALIAS, 
-                                socket_timeout=0.1, 
+                    .master_for(settings.SESSION_REDIS_SENTINEL_MASTER_ALIAS,
+                                socket_timeout=0.1,
                                 db=getattr(settings, 'SESSION_REDIS_DB', 0))
 
 elif settings.SESSION_REDIS_URL is not None:
 
     redis_server = redis.StrictRedis.from_url(settings.SESSION_REDIS_URL)
 elif settings.SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH is None:
-    
+
     redis_server = redis.StrictRedis(
         host=settings.SESSION_REDIS_HOST,
         port=settings.SESSION_REDIS_PORT,
@@ -37,6 +37,8 @@ else:
         password=settings.SESSION_REDIS_PASSWORD,
     )
 
+if settings.SESSION_REDIS_WRAPPER:
+    redis_server = settings.SESSION_REDIS_WRAPPER(redis_server)
 
 class SessionStore(SessionBase):
     """
