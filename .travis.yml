@@ -19,6 +19,10 @@ matrix:
       env: DJANGO="django>=1.4,<1.5"
     - python: "3.2"
       env: DJANGO="django>=1.4,<1.5"
+    - python: "3.3"
+      env: DJANGO="django<1.9"
+    - python: "3.2"
+      env: DJANGO="django<1.9"
     - python: "2.6"
       env: DJANGO="django>=1.5"
 install:
