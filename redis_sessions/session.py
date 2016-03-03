@@ -17,7 +17,7 @@ if settings.SESSION_REDIS_SENTINEL_LIST is not None:
         settings.SESSION_REDIS_SENTINEL_LIST,
         socket_timeout=0.1,
         db=getattr(settings, 'SESSION_REDIS_DB', 0),
-        password=getattr(settings, 'SESSION_REDIS_PASSWORD')
+        password=getattr(settings, 'SESSION_REDIS_PASSWORD', None)
     ).master_for(settings.SESSION_REDIS_SENTINEL_MASTER_ALIAS)
 
 elif settings.SESSION_REDIS_URL is not None:
