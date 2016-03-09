@@ -3,6 +3,7 @@ from django.conf import settings
 
 SESSION_REDIS_HOST = getattr(settings, 'SESSION_REDIS_HOST', 'localhost')
 SESSION_REDIS_PORT = getattr(settings, 'SESSION_REDIS_PORT', 6379)
+SESSION_REDIS_SOCKET_TIMEOUT = getattr(settings, 'SESSION_REDIS_SOCKET_TIMEOUT', 0.1)
 SESSION_REDIS_DB = getattr(settings, 'SESSION_REDIS_DB', 0)
 SESSION_REDIS_PREFIX = getattr(settings, 'SESSION_REDIS_PREFIX', '')
 SESSION_REDIS_PASSWORD = getattr(settings, 'SESSION_REDIS_PASSWORD', None)

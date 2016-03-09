@@ -15,19 +15,23 @@ if settings.SESSION_REDIS_SENTINEL_LIST is not None:
 
     redis_server = Sentinel(
         settings.SESSION_REDIS_SENTINEL_LIST,
-        socket_timeout=0.1,
+        socket_timeout=settings.SESSION_REDIS_SOCKET_TIMEOUT,
         db=getattr(settings, 'SESSION_REDIS_DB', 0),
         password=getattr(settings, 'SESSION_REDIS_PASSWORD', None)
     ).master_for(settings.SESSION_REDIS_SENTINEL_MASTER_ALIAS)
 
 elif settings.SESSION_REDIS_URL is not None:
 
-    redis_server = redis.StrictRedis.from_url(settings.SESSION_REDIS_URL)
+    redis_server = redis.StrictRedis.from_url(
+        settings.SESSION_REDIS_URL,
+        socket_timeout=settings.SESSION_REDIS_SOCKET_TIMEOUT
+    )
 elif settings.SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH is None:
     
     redis_server = redis.StrictRedis(
         host=settings.SESSION_REDIS_HOST,
         port=settings.SESSION_REDIS_PORT,
+        socket_timeout=settings.SESSION_REDIS_SOCKET_TIMEOUT,
         db=settings.SESSION_REDIS_DB,
         password=settings.SESSION_REDIS_PASSWORD
     )
@@ -35,6 +39,7 @@ else:
 
     redis_server = redis.StrictRedis(
         unix_socket_path=settings.SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH,
+        socket_timeout=settings.SESSION_REDIS_SOCKET_TIMEOUT,
         db=settings.SESSION_REDIS_DB,
         password=settings.SESSION_REDIS_PASSWORD,
     )
