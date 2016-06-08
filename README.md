@@ -9,18 +9,18 @@ Redis database backend for your sessions
 Installation
 ============
 
-1. Run `pip install django-redis-sessions` or alternatively  download the tarball and run `python setup.py install`,
+* Run `pip install django-redis-sessions` or alternatively  download the tarball and run `python setup.py install`,
 
 For Django < 1.4 run `pip install django-redis-sessions==0.3`
 
-2. Set `redis_sessions.session` as your session engine, like so:
+* Set `redis_sessions.session` as your session engine, like so:
 
 
 ```
 SESSION_ENGINE = 'redis_sessions.session'
 ```
 
-3. Optional settings:
+* Optional settings:
 
 ```
 SESSION_REDIS_HOST = 'localhost'
@@ -40,11 +40,11 @@ SESSION_REDIS_SENTINEL_MASTER_ALIAS = 'sentinel-master'
 
 ```
 
-4. That's it:
 
-See: `django-redis-sessions <http://pypi.python.org/pypi/django-redis-sessions>`_ on pypi
 
-5. Tests
+Tests
+============
+
 
 ```
 $ pip install django nose redis
