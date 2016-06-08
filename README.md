@@ -2,23 +2,27 @@ django-redis-sessions
 =======================
 Redis database backend for your sessions
 
-.. image:: https://travis-ci.org/martinrusev/django-redis-sessions.svg?branch=master
-    :target: https://travis-ci.org/martinrusev/django-redis-sessions
 
-------------
+[![Build Status](https://travis-ci.org/martinrusev/django-redis-sessions.svg?branch=master)](https://travis-ci.org/martinrusev/django-redis-sessions)
+
+
 Installation
-------------
+============
 
-1. Run ``pip install django-redis-sessions`` or alternatively  download the tarball and run ``python setup.py install``,
+1. Run `pip install django-redis-sessions` or alternatively  download the tarball and run `python setup.py install`,
 
-For Django < 1.4 run ``pip install django-redis-sessions==0.3``
+For Django < 1.4 run `pip install django-redis-sessions==0.3`
 
-2. Set ``redis_sessions.session`` as your session engine, like so::
+2. Set ``redis_sessions.session`` as your session engine, like so:
 
+
+```
     SESSION_ENGINE = 'redis_sessions.session'
+```
 
-3. Optional settings::
+3. Optional settings:
 
+```
     SESSION_REDIS_HOST = 'localhost'
     SESSION_REDIS_PORT = 6379
     SESSION_REDIS_DB = 0
@@ -30,12 +34,21 @@ For Django < 1.4 run ``pip install django-redis-sessions==0.3``
 
     SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH = '/var/run/redis/redis.sock'
 
-4. That's it::
+    # Redis Sentinel 
+    SESSION_REDIS_SENTINEL_LIST = [(host, port), (host, port), (host, port)]
+    SESSION_REDIS_SENTINEL_MASTER_ALIAS = 'sentinel-master'
+
+```
+
+4. That's it:
 
 See: `django-redis-sessions <http://pypi.python.org/pypi/django-redis-sessions>`_ on pypi
 
-5. Tests::
+5. Tests
 
     $ pip install django nose redis
     # Make sure you have redis running on localhost:6379
     $ nosetests
+
+
+# [Changelog](https://github.com/martinrusev/imbox/blob/master/CHANGELOG.md)
