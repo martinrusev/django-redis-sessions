@@ -24,6 +24,7 @@ For Django < 1.4 run ``pip install django-redis-sessions==0.3``
     SESSION_REDIS_DB = 0
     SESSION_REDIS_PASSWORD = 'password'
     SESSION_REDIS_PREFIX = 'session'
+    SESSION_REDIS_SOCKET_TIMEOUT=1
 
     # If you prefer domain socket connection, you can just add this line instead of SESSION_REDIS_HOST and SESSION_REDIS_PORT.
 
