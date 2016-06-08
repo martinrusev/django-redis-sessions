@@ -1,4 +1,4 @@
-## 0.5.5 (9 June 2016)
+## 0.5.6 (9 June 2016)
 
 
 IMPROVEMENTS:
