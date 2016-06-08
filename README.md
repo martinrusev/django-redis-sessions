@@ -30,7 +30,8 @@ SESSION_REDIS_PASSWORD = 'password'
 SESSION_REDIS_PREFIX = 'session'
 SESSION_REDIS_SOCKET_TIMEOUT=1
 
-# If you prefer domain socket connection, you can just add this line instead of SESSION_REDIS_HOST and SESSION_REDIS_PORT.
+# If you prefer domain socket connection, 
+# you can just add this line instead of SESSION_REDIS_HOST and SESSION_REDIS_PORT.
 
 SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH = '/var/run/redis/redis.sock'
 
