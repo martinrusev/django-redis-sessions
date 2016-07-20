@@ -53,4 +53,4 @@ $ pip install django nose redis
 $ nosetests
 ```
 
-# [Changelog](https://github.com/martinrusev/imbox/blob/master/CHANGELOG.md)
+# [Changelog](https://github.com/martinrusev/django-redis-sessions/blob/master/CHANGELOG.md)
