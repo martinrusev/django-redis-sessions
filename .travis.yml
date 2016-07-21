@@ -12,6 +12,8 @@ env:
   - DJANGO="django>=1.5"
 matrix:
   exclude:
+    - python: "3.5"
+      env: DJANGO="django>=1.4,<1.5"
     - python: "3.4"
       env: DJANGO="django>=1.4,<1.5"
     - python: "2.6"
