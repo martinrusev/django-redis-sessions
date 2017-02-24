@@ -8,44 +8,59 @@ from django.contrib.sessions.backends.base import SessionBase, CreateError
 from redis_sessions import settings
 
 
-# Avoid new redis connection on each request
+class RedisServer():
+    session_key = None
+    __redis = {}
 
-if settings.SESSION_REDIS_SENTINEL_LIST is not None:
-    from redis.sentinel import Sentinel
+    def __init__(self, session_key):
+        self.session_key = session_key
+        if settings.SESSION_REDIS_SENTINEL_LIST is not None:
+            self.connection_type = 'sentinel'
+        elif settings.SESSION_REDIS_URL is not None:
+            self.connection_type = 'redis_url'
+        elif settings.SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH is None:
+            self.connection_type = 'unix_url'
+        else:
+            self.connection_type = 'default'
 
-    redis_server = Sentinel(
-        settings.SESSION_REDIS_SENTINEL_LIST,
-        socket_timeout=settings.SESSION_REDIS_SOCKET_TIMEOUT,
-        retry_on_timeout=settings.SESSION_REDIS_RETRY_ON_TIMEOUT,
-        db=getattr(settings, 'SESSION_REDIS_DB', 0),
-        password=getattr(settings, 'SESSION_REDIS_PASSWORD', None)
-    ).master_for(settings.SESSION_REDIS_SENTINEL_MASTER_ALIAS)
+    def get(self):
+        if self.connection_type in self.__redis:
+            return self.__redis[self.connection_type]
 
-elif settings.SESSION_REDIS_URL is not None:
+        if self.connection_type == 'sentinel':
+            from redis.sentinel import Sentinel
+            self.__redis[self.connection_type] = Sentinel(
+                settings.SESSION_REDIS_SENTINEL_LIST,
+                socket_timeout=settings.SESSION_REDIS_SOCKET_TIMEOUT,
+                retry_on_timeout=settings.SESSION_REDIS_RETRY_ON_TIMEOUT,
+                db=getattr(settings, 'SESSION_REDIS_DB', 0),
+                password=getattr(settings, 'SESSION_REDIS_PASSWORD', None)
+            ).master_for(settings.SESSION_REDIS_SENTINEL_MASTER_ALIAS)
 
-    redis_server = redis.StrictRedis.from_url(
-        settings.SESSION_REDIS_URL,
-        socket_timeout=settings.SESSION_REDIS_SOCKET_TIMEOUT
-    )
-elif settings.SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH is None:
-    
-    redis_server = redis.StrictRedis(
-        host=settings.SESSION_REDIS_HOST,
-        port=settings.SESSION_REDIS_PORT,
-        socket_timeout=settings.SESSION_REDIS_SOCKET_TIMEOUT,
-        retry_on_timeout=settings.SESSION_REDIS_RETRY_ON_TIMEOUT,
-        db=settings.SESSION_REDIS_DB,
-        password=settings.SESSION_REDIS_PASSWORD
-    )
-else:
+        elif settings.SESSION_REDIS_URL is not None:
+            self.__redis[self.connection_type] = redis.StrictRedis.from_url(
+                settings.SESSION_REDIS_URL,
+                socket_timeout=settings.SESSION_REDIS_SOCKET_TIMEOUT
+            )
+        elif settings.SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH is None:
+            self.__redis[self.connection_type] = redis.StrictRedis(
+                host=settings.SESSION_REDIS_HOST,
+                port=settings.SESSION_REDIS_PORT,
+                socket_timeout=settings.SESSION_REDIS_SOCKET_TIMEOUT,
+                retry_on_timeout=settings.SESSION_REDIS_RETRY_ON_TIMEOUT,
+                db=settings.SESSION_REDIS_DB,
+                password=settings.SESSION_REDIS_PASSWORD
+            )
+        else:
+            self.__redis[self.connection_type] = redis.StrictRedis(
+                unix_socket_path=settings.SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH,
+                socket_timeout=settings.SESSION_REDIS_SOCKET_TIMEOUT,
+                retry_on_timeout=settings.SESSION_REDIS_RETRY_ON_TIMEOUT,
+                db=settings.SESSION_REDIS_DB,
+                password=settings.SESSION_REDIS_PASSWORD,
+            )
 
-    redis_server = redis.StrictRedis(
-        unix_socket_path=settings.SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH,
-        socket_timeout=settings.SESSION_REDIS_SOCKET_TIMEOUT,
-        retry_on_timeout=settings.SESSION_REDIS_RETRY_ON_TIMEOUT,
-        db=settings.SESSION_REDIS_DB,
-        password=settings.SESSION_REDIS_PASSWORD,
-    )
+        return self.__redis[self.connection_type]
 
 
 class SessionStore(SessionBase):
@@ -54,8 +69,7 @@ class SessionStore(SessionBase):
     """
     def __init__(self, session_key=None):
         super(SessionStore, self).__init__(session_key)
-
-        self.server = redis_server
+        self.server = RedisServer(session_key).get()
 
     def load(self):
         try:
