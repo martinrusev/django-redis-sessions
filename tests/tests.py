@@ -67,6 +67,7 @@ def test_save_and_load():
     session_data = redis_session.load()
     eq_(session_data.get('item_test'), 8)
 
+
 def test_with_redis_url_config():
     settings.SESSION_REDIS_URL = 'redis://localhost'
 
@@ -82,6 +83,26 @@ def test_with_redis_url_config():
     eq_(host, 'localhost')
     eq_(port, 6379)
     eq_(db, 0)
+
+
+def test_one_connection_is_used():
+    session = SessionStore('session_key_1')
+    session['key1'] = 'value1'
+    session.save()
+
+    redis_server = session.server
+    redis_server.client_setname('client_name_1')
+    client_name1 = redis_server.client_getname()
+    del session
+
+    session = SessionStore('session_key_2')
+    session['key2'] = 'value2'
+    session.save()
+
+    redis_server = session.server
+    client_name2 = redis_server.client_getname()
+    eq_(client_name1, client_name2)
+
 
 def test_with_unix_url_config():
     pass

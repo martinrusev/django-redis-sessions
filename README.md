@@ -3,7 +3,7 @@ django-redis-sessions
 Redis database backend for your sessions
 
 
-[![Build Status](https://travis-ci.org/igor-pavlenko/django-redis-sessions.svg?branch=master)](https://travis-ci.org/igor-pavlenko/django-redis-sessions)
+[![Build Status](https://travis-ci.org/martinrusev/django-redis-sessions.svg?branch=master)](https://travis-ci.org/martinrusev/django-redis-sessions)
 
 
 Installation
