@@ -2,6 +2,7 @@ from redis_sessions.session import SessionStore
 from redis_sessions import settings
 import time
 from nose.tools import eq_, assert_false
+from random import randint
 
 
 ##  Dev
@@ -91,8 +92,10 @@ def test_one_connection_is_used():
     session.save()
 
     redis_server = session.server
-    redis_server.client_setname('client_name_1')
-    client_name1 = redis_server.client_getname()
+    set_client_name_1 = 'client_name_' + str(randint(1, 1000))
+    redis_server.client_setname(set_client_name_1)
+    client_name_1 = redis_server.client_getname()
+    eq_(set_client_name_1, client_name_1)
     del session
 
     session = SessionStore('session_key_2')
@@ -100,8 +103,8 @@ def test_one_connection_is_used():
     session.save()
 
     redis_server = session.server
-    client_name2 = redis_server.client_getname()
-    eq_(client_name1, client_name2)
+    client_name_2 = redis_server.client_getname()
+    eq_(client_name_1, client_name_2)
 
 
 def test_with_unix_url_config():
