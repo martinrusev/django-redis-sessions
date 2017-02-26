@@ -1,4 +1,5 @@
 from redis_sessions.session import SessionStore
+from redis_sessions.session import RedisServer
 from redis_sessions import settings
 import time
 from nose.tools import eq_, assert_false
@@ -106,6 +107,61 @@ def test_one_connection_is_used():
     client_name_2 = redis_server.client_getname()
     eq_(client_name_1, client_name_2)
 
+
+def test_redis_pool_server_select():
+    servers = [
+        {
+            'SESSION_REDIS_HOST': 'localhost2',
+            'SESSION_REDIS_PORT': 6379,
+            'SESSION_REDIS_DB': 0,
+            'SESSION_REDIS_PASSWORD': None,
+            'SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH': None,
+            'SESSION_REDIS_WEIGHT': 1,
+        },
+        {
+            'SESSION_REDIS_HOST': 'localhost1',
+            'SESSION_REDIS_PORT': 6379,
+            'SESSION_REDIS_DB': 0,
+            'SESSION_REDIS_PASSWORD': None,
+            'SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH': None,
+            'SESSION_REDIS_WEIGHT': 1,
+        },
+    ]
+
+    keys1 = [
+        'm8f0os91g40fsq8eul6tejqpp6',
+        'kcffsbb5o272et1d5e6ib7gh75',
+        'gqldpha87m8183vl9s8uqobcr2',
+        'ukb9bg2jifrr60fstla67knjv3',
+        'k3dranjfna7fv7ijpofs6l6bj2',
+        'an4no833idr9jddr960r8ikai5',
+        '16b9gardpcscrj5q4a4kf3c4u7',
+        'etdefnorfbvfc165c5airu77p2',
+        'mr778ou0sqqme21gjdiu4drtc0',
+        'ctkgd8knu5hukdrdue6im28p90'
+    ]
+
+    keys2 = [
+        'jgpsbmjj6030fdr3aefg37nq47',
+        'prsv0trk66jc100pipm6bb78c3',
+        '84ksqj2vqral7c6ped9hcnq940',
+        'bv2uc3q48rm8ubipjmolgnhul0',
+        '6c8oph72pfsg3db37qsefn3746',
+        'tbc0sjtl2bkp5i9n2j2jiqf4r0',
+        'v0on9rorn71913o3rpqhvkknc1',
+        'lmsv98ns819uo2klk3s1nusqm0',
+        '0foo2bkgvrlk3jt2tjbssrsc47',
+        '05ure0f6r5jjlsgaimsuk4n1k2',
+    ]
+    rs = RedisServer('')
+
+    for key in keys1:
+        server_key, server = rs.get_server(key, servers)
+        eq_(server_key, 1)
+
+    for key in keys2:
+        server_key, server = rs.get_server(key, servers)
+        eq_(server_key, 0)
 
 def test_with_unix_url_config():
     pass

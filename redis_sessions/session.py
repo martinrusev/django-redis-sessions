@@ -9,27 +9,62 @@ from redis_sessions import settings
 
 
 class RedisServer():
-    session_key = None
     __redis = {}
 
     def __init__(self, session_key):
         self.session_key = session_key
+        self.connection_key = ''
+
         if settings.SESSION_REDIS_SENTINEL_LIST is not None:
             self.connection_type = 'sentinel'
-        elif settings.SESSION_REDIS_URL is not None:
-            self.connection_type = 'redis_url'
-        elif settings.SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH is None:
-            self.connection_type = 'unix_url'
         else:
-            self.connection_type = 'default'
+            if settings.SESSION_REDIS_POOL is not None:
+                server_key, server = self.get_server(session_key, settings.SESSION_REDIS_POOL)
+                self.connection_key = str(server_key)
+                settings.SESSION_REDIS_HOST = getattr(server, 'SESSION_REDIS_HOST', 'localhost')
+                settings.SESSION_REDIS_PORT = getattr(server, 'SESSION_REDIS_PORT', 6379)
+                settings.SESSION_REDIS_DB = getattr(server, 'SESSION_REDIS_DB', 0)
+                settings.SESSION_REDIS_PASSWORD = getattr(server, 'SESSION_REDIS_PASSWORD', None)
+                settings.SESSION_REDIS_URL = getattr(server, 'SESSION_REDIS_URL', None)
+                settings.SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH = getattr(server,
+                                                                         'SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH', None)
+
+            if settings.SESSION_REDIS_URL is not None:
+                self.connection_type = 'redis_url'
+            elif settings.SESSION_REDIS_HOST is not None:
+                self.connection_type = 'redis_host'
+            elif settings.SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH is not None:
+                self.connection_type = 'redis_unix_url'
+
+            self.connection_key += self.connection_type
+
+    def get_server(self, key, servers_pool):
+        total_weight = sum([row.get('SESSION_REDIS_WEIGHT', 1) for row in servers_pool])
+        pos = 0
+        for i in range(3, -1, -1):
+            pos = pos * 2 ** 8 + ord(key[i])
+        pos = pos % total_weight
+
+        pool = iter(servers_pool)
+        server = next(pool)
+        server_key = 0
+        i = 0
+        while i < total_weight:
+            if i <= pos < (i + server.get('SESSION_REDIS_WEIGHT', 1)):
+                return server_key, server
+            i += server.get('SESSION_REDIS_WEIGHT', 1)
+            server = next(pool)
+            server_key += 1
+
+        return
 
     def get(self):
-        if self.connection_type in self.__redis:
-            return self.__redis[self.connection_type]
+        if self.connection_key in self.__redis:
+            return self.__redis[self.connection_key]
 
         if self.connection_type == 'sentinel':
             from redis.sentinel import Sentinel
-            self.__redis[self.connection_type] = Sentinel(
+            self.__redis[self.connection_key] = Sentinel(
                 settings.SESSION_REDIS_SENTINEL_LIST,
                 socket_timeout=settings.SESSION_REDIS_SOCKET_TIMEOUT,
                 retry_on_timeout=settings.SESSION_REDIS_RETRY_ON_TIMEOUT,
@@ -37,13 +72,13 @@ class RedisServer():
                 password=getattr(settings, 'SESSION_REDIS_PASSWORD', None)
             ).master_for(settings.SESSION_REDIS_SENTINEL_MASTER_ALIAS)
 
-        elif settings.SESSION_REDIS_URL is not None:
-            self.__redis[self.connection_type] = redis.StrictRedis.from_url(
+        elif self.connection_type == 'redis_url':
+            self.__redis[self.connection_key] = redis.StrictRedis.from_url(
                 settings.SESSION_REDIS_URL,
                 socket_timeout=settings.SESSION_REDIS_SOCKET_TIMEOUT
             )
-        elif settings.SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH is None:
-            self.__redis[self.connection_type] = redis.StrictRedis(
+        elif self.connection_type == 'unix_url':
+            self.__redis[self.connection_key] = redis.StrictRedis(
                 host=settings.SESSION_REDIS_HOST,
                 port=settings.SESSION_REDIS_PORT,
                 socket_timeout=settings.SESSION_REDIS_SOCKET_TIMEOUT,
@@ -52,7 +87,7 @@ class RedisServer():
                 password=settings.SESSION_REDIS_PASSWORD
             )
         else:
-            self.__redis[self.connection_type] = redis.StrictRedis(
+            self.__redis[self.connection_key] = redis.StrictRedis(
                 unix_socket_path=settings.SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH,
                 socket_timeout=settings.SESSION_REDIS_SOCKET_TIMEOUT,
                 retry_on_timeout=settings.SESSION_REDIS_RETRY_ON_TIMEOUT,
@@ -60,7 +95,7 @@ class RedisServer():
                 password=settings.SESSION_REDIS_PASSWORD,
             )
 
-        return self.__redis[self.connection_type]
+        return self.__redis[self.connection_key]
 
 
 class SessionStore(SessionBase):
