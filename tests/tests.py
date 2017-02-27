@@ -1,7 +1,9 @@
 from redis_sessions.session import SessionStore
+from redis_sessions.session import RedisServer
 from redis_sessions import settings
 import time
 from nose.tools import eq_, assert_false
+from random import randint
 
 
 ##  Dev
@@ -18,13 +20,11 @@ def test_modify_and_keys():
     eq_(redis_session['test'], 'test_me')
 
 
-
 def test_session_load_does_not_create_record():
     session = SessionStore('someunknownkey')
     session.load()
 
     eq_(redis_session.exists(redis_session.session_key), False)
-
 
 
 def test_save_and_delete():
@@ -69,6 +69,7 @@ def test_save_and_load():
     session_data = redis_session.load()
     eq_(session_data.get('item_test'), 8)
 
+
 def test_with_redis_url_config():
     settings.SESSION_REDIS_URL = 'redis://localhost'
 
@@ -76,7 +77,7 @@ def test_with_redis_url_config():
 
     redis_session = SessionStore()
     server = redis_session.server
-    
+
     host = server.connection_pool.connection_kwargs.get('host')
     port = server.connection_pool.connection_kwargs.get('port')
     db = server.connection_pool.connection_kwargs.get('db')
@@ -84,6 +85,83 @@ def test_with_redis_url_config():
     eq_(host, 'localhost')
     eq_(port, 6379)
     eq_(db, 0)
+
+
+def test_one_connection_is_used():
+    session = SessionStore('session_key_1')
+    session['key1'] = 'value1'
+    session.save()
+
+    redis_server = session.server
+    set_client_name_1 = 'client_name_' + str(randint(1, 1000))
+    redis_server.client_setname(set_client_name_1)
+    client_name_1 = redis_server.client_getname()
+    eq_(set_client_name_1, client_name_1)
+    del session
+
+    session = SessionStore('session_key_2')
+    session['key2'] = 'value2'
+    session.save()
+
+    redis_server = session.server
+    client_name_2 = redis_server.client_getname()
+    eq_(client_name_1, client_name_2)
+
+
+def test_redis_pool_server_select():
+    servers = [
+        {
+            'SESSION_REDIS_HOST': 'localhost2',
+            'SESSION_REDIS_PORT': 6379,
+            'SESSION_REDIS_DB': 0,
+            'SESSION_REDIS_PASSWORD': None,
+            'SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH': None,
+            'SESSION_REDIS_WEIGHT': 1,
+        },
+        {
+            'SESSION_REDIS_HOST': 'localhost1',
+            'SESSION_REDIS_PORT': 6379,
+            'SESSION_REDIS_DB': 0,
+            'SESSION_REDIS_PASSWORD': None,
+            'SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH': None,
+            'SESSION_REDIS_WEIGHT': 1,
+        },
+    ]
+
+    keys1 = [
+        'm8f0os91g40fsq8eul6tejqpp6k22',
+        'kcffsbb5o272et1d5e6ib7gh75pd9',
+        'gqldpha87m8183vl9s8uqobcr2ws3',
+        'ukb9bg2jifrr60fstla67knjv3e32',
+        'k3dranjfna7fv7ijpofs6l6bj2pw1',
+        'an4no833idr9jddr960r8ikai5nh3',
+        '16b9gardpcscrj5q4a4kf3c4u7tq8',
+        'etdefnorfbvfc165c5airu77p2pl9',
+        'mr778ou0sqqme21gjdiu4drtc0bv4',
+        'ctkgd8knu5hukdrdue6im28p90kt7'
+    ]
+
+    keys2 = [
+        'jgpsbmjj6030fdr3aefg37nq47nb8',
+        'prsv0trk66jc100pipm6bb78c3pl2',
+        '84ksqj2vqral7c6ped9hcnq940qq1',
+        'bv2uc3q48rm8ubipjmolgnhul0ou3',
+        '6c8oph72pfsg3db37qsefn3746fg4',
+        'tbc0sjtl2bkp5i9n2j2jiqf4r0bg9',
+        'v0on9rorn71913o3rpqhvkknc1wm5',
+        'lmsv98ns819uo2klk3s1nusqm0mr0',
+        '0foo2bkgvrlk3jt2tjbssrsc47tr3',
+        '05ure0f6r5jjlsgaimsuk4n1k2sx6',
+    ]
+    rs = RedisServer('')
+
+    for key in keys1:
+        server_key, server = rs.get_server(key, servers)
+        eq_(server_key, 1)
+
+    for key in keys2:
+        server_key, server = rs.get_server(key, servers)
+        eq_(server_key, 0)
 
 def test_with_unix_url_config():
     pass
@@ -93,20 +171,20 @@ def test_with_unix_url_config():
     # unixsocket /tmp/redis.sock
     # unixsocketperm 755
 
-    settings.SESSION_REDIS_URL = 'unix:///tmp/redis.sock'
+    #settings.SESSION_REDIS_URL = 'unix:///tmp/redis.sock'
 
-    from redis_sessions.session import SessionStore
+    #from redis_sessions.session import SessionStore
 
-    redis_session = SessionStore()
-    server = redis_session.server
-    
-    host = server.connection_pool.connection_kwargs.get('host')
-    port = server.connection_pool.connection_kwargs.get('port')
-    db = server.connection_pool.connection_kwargs.get('db')
-
-    eq_(host, 'localhost')
-    eq_(port, 6379)
-    eq_(db, 0)
+    # redis_session = SessionStore()
+    # server = redis_session.server
+    #
+    # host = server.connection_pool.connection_kwargs.get('host')
+    # port = server.connection_pool.connection_kwargs.get('port')
+    # db = server.connection_pool.connection_kwargs.get('db')
+    #
+    # eq_(host, 'localhost')
+    # eq_(port, 6379)
+    # eq_(db, 0)
 
 # def test_load():
 #     redis_session.set_expiry(60)

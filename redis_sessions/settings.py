@@ -8,15 +8,34 @@ SESSION_REDIS_RETRY_ON_TIMEOUT = getattr(settings, 'SESSION_REDIS_RETRY_ON_TIMEO
 SESSION_REDIS_DB = getattr(settings, 'SESSION_REDIS_DB', 0)
 SESSION_REDIS_PREFIX = getattr(settings, 'SESSION_REDIS_PREFIX', '')
 SESSION_REDIS_PASSWORD = getattr(settings, 'SESSION_REDIS_PASSWORD', None)
-SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH = getattr(
-    settings, 'SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH', None
-)
+SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH = getattr(settings, 'SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH', None)
 SESSION_REDIS_URL = getattr(settings, 'SESSION_REDIS_URL', None)
 
+"""
+Should be on the format:
+[
+    {
+        'SESSION_REDIS_HOST': 'localhost2',
+        'SESSION_REDIS_PORT': 6379,
+        'SESSION_REDIS_DB': 0,
+        'SESSION_REDIS_PASSWORD': None,
+        'SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH': None,
+        'SESSION_REDIS_URL': None,
+        'SESSION_REDIS_WEIGHT': 1,
+    },
+    {
+        'SESSION_REDIS_HOST': 'localhost1',
+        'SESSION_REDIS_PORT': 6379,
+        'SESSION_REDIS_DB': 0,
+        'SESSION_REDIS_PASSWORD': None,
+        'SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH': None,
+        'SESSION_REDIS_URL': None,
+        'SESSION_REDIS_WEIGHT': 1,
+    },
+]
+"""
+SESSION_REDIS_POOL = getattr(settings, 'SESSION_REDIS_POOL', None)
+
 # should be on the format [(host, port), (host, port), (host, port)]
-SESSION_REDIS_SENTINEL_LIST = getattr(
-	settings, 'SESSION_REDIS_SENTINEL_LIST', None
-)
-SESSION_REDIS_SENTINEL_MASTER_ALIAS = getattr(
-	settings, 'SESSION_REDIS_SENTINEL_MASTER_ALIAS', None
-)
+SESSION_REDIS_SENTINEL_LIST = getattr(settings, 'SESSION_REDIS_SENTINEL_LIST', None)
+SESSION_REDIS_SENTINEL_MASTER_ALIAS = getattr(settings, 'SESSION_REDIS_SENTINEL_MASTER_ALIAS', None)

@@ -39,6 +39,41 @@ SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH = '/var/run/redis/redis.sock'
 SESSION_REDIS_SENTINEL_LIST = [(host, port), (host, port), (host, port)]
 SESSION_REDIS_SENTINEL_MASTER_ALIAS = 'sentinel-master'
 
+# Redis Pool (Horizontal partitioning)
+# Divide sessions between Redis instances based on session key.
+# You can choose connection type for each Redis from pool (host/port, unix socket, redis url). 
+SESSION_REDIS_PREFIX = 'session'
+SESSION_REDIS_SOCKET_TIMEOUT = 1
+SESSION_REDIS_RETRY_ON_TIMEOUT = False
+SESSION_REDIS_POOL = [
+    {
+        'SESSION_REDIS_HOST': 'localhost3',
+        'SESSION_REDIS_PORT': 6379,
+        'SESSION_REDIS_DB': 0,
+        'SESSION_REDIS_PASSWORD': None,
+        'SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH': None,
+        'SESSION_REDIS_URL': None,
+        'SESSION_REDIS_WEIGHT': 1,
+    },
+    {
+        'SESSION_REDIS_HOST': 'localhost2',
+        'SESSION_REDIS_PORT': 6379,
+        'SESSION_REDIS_DB': 0,
+        'SESSION_REDIS_PASSWORD': None,
+        'SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH': None,
+        'SESSION_REDIS_URL': None,
+        'SESSION_REDIS_WEIGHT': 1,
+    },
+    {
+        'SESSION_REDIS_HOST': 'localhost1',
+        'SESSION_REDIS_PORT': 6379,
+        'SESSION_REDIS_DB': 0,
+        'SESSION_REDIS_PASSWORD': None,
+        'SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH': None,
+        'SESSION_REDIS_URL': None,
+        'SESSION_REDIS_WEIGHT': 1,
+    },
+]
 ```
 
 
