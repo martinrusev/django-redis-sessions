@@ -40,7 +40,8 @@ SESSION_REDIS_SENTINEL_LIST = [(host, port), (host, port), (host, port)]
 SESSION_REDIS_SENTINEL_MASTER_ALIAS = 'sentinel-master'
 
 # Redis Pool (Horizontal partitioning)
-# Divide sessions between Redis instances based on session key (redis_session.session.RedisServer::get_server())
+# Divide sessions between Redis instances based on session key.
+# You can choose connection type for each Redis from pool (host/port, unix socket, redis url). 
 SESSION_REDIS_PREFIX = 'session'
 SESSION_REDIS_SOCKET_TIMEOUT = 1
 SESSION_REDIS_RETRY_ON_TIMEOUT = False
