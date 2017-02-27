@@ -129,29 +129,29 @@ def test_redis_pool_server_select():
     ]
 
     keys1 = [
-        'm8f0os91g40fsq8eul6tejqpp6',
-        'kcffsbb5o272et1d5e6ib7gh75',
-        'gqldpha87m8183vl9s8uqobcr2',
-        'ukb9bg2jifrr60fstla67knjv3',
-        'k3dranjfna7fv7ijpofs6l6bj2',
-        'an4no833idr9jddr960r8ikai5',
-        '16b9gardpcscrj5q4a4kf3c4u7',
-        'etdefnorfbvfc165c5airu77p2',
-        'mr778ou0sqqme21gjdiu4drtc0',
-        'ctkgd8knu5hukdrdue6im28p90'
+        'm8f0os91g40fsq8eul6tejqpp6k22',
+        'kcffsbb5o272et1d5e6ib7gh75pd9',
+        'gqldpha87m8183vl9s8uqobcr2ws3',
+        'ukb9bg2jifrr60fstla67knjv3e32',
+        'k3dranjfna7fv7ijpofs6l6bj2pw1',
+        'an4no833idr9jddr960r8ikai5nh3',
+        '16b9gardpcscrj5q4a4kf3c4u7tq8',
+        'etdefnorfbvfc165c5airu77p2pl9',
+        'mr778ou0sqqme21gjdiu4drtc0bv4',
+        'ctkgd8knu5hukdrdue6im28p90kt7'
     ]
 
     keys2 = [
-        'jgpsbmjj6030fdr3aefg37nq47',
-        'prsv0trk66jc100pipm6bb78c3',
-        '84ksqj2vqral7c6ped9hcnq940',
-        'bv2uc3q48rm8ubipjmolgnhul0',
-        '6c8oph72pfsg3db37qsefn3746',
-        'tbc0sjtl2bkp5i9n2j2jiqf4r0',
-        'v0on9rorn71913o3rpqhvkknc1',
-        'lmsv98ns819uo2klk3s1nusqm0',
-        '0foo2bkgvrlk3jt2tjbssrsc47',
-        '05ure0f6r5jjlsgaimsuk4n1k2',
+        'jgpsbmjj6030fdr3aefg37nq47nb8',
+        'prsv0trk66jc100pipm6bb78c3pl2',
+        '84ksqj2vqral7c6ped9hcnq940qq1',
+        'bv2uc3q48rm8ubipjmolgnhul0ou3',
+        '6c8oph72pfsg3db37qsefn3746fg4',
+        'tbc0sjtl2bkp5i9n2j2jiqf4r0bg9',
+        'v0on9rorn71913o3rpqhvkknc1wm5',
+        'lmsv98ns819uo2klk3s1nusqm0mr0',
+        '0foo2bkgvrlk3jt2tjbssrsc47tr3',
+        '05ure0f6r5jjlsgaimsuk4n1k2sx6',
     ]
     rs = RedisServer('')
 

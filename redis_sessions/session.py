@@ -36,7 +36,7 @@ class RedisServer():
             elif settings.SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH is not None:
                 self.connection_type = 'redis_unix_url'
 
-            self.connection_key += self.connection_type
+        self.connection_key += self.connection_type
 
     def get_server(self, key, servers_pool):
         total_weight = sum([row.get('SESSION_REDIS_WEIGHT', 1) for row in servers_pool])
