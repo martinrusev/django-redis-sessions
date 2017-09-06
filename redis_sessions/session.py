@@ -21,12 +21,12 @@ class RedisServer():
             if settings.SESSION_REDIS_POOL is not None:
                 server_key, server = self.get_server(session_key, settings.SESSION_REDIS_POOL)
                 self.connection_key = str(server_key)
-                settings.SESSION_REDIS_HOST = getattr(server, 'HOST', 'localhost')
-                settings.SESSION_REDIS_PORT = getattr(server, 'PORT', 6379)
-                settings.SESSION_REDIS_DB = getattr(server, 'DB', 0)
-                settings.SESSION_REDIS_PASSWORD = getattr(server, 'PASSWORD', None)
-                settings.SESSION_REDIS_URL = getattr(server, 'URL', None)
-                settings.SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH = getattr(server,'UNIX_DOMAIN_SOCKET_PATH', None)
+                settings.SESSION_REDIS_HOST = getattr(server, 'host', 'localhost')
+                settings.SESSION_REDIS_PORT = getattr(server, 'port', 6379)
+                settings.SESSION_REDIS_DB = getattr(server, 'db', 0)
+                settings.SESSION_REDIS_PASSWORD = getattr(server, 'password', None)
+                settings.SESSION_REDIS_URL = getattr(server, 'url', None)
+                settings.SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH = getattr(server,'unix_domain_socket_path', None)
 
             if settings.SESSION_REDIS_URL is not None:
                 self.connection_type = 'redis_url'
@@ -38,7 +38,7 @@ class RedisServer():
         self.connection_key += self.connection_type
 
     def get_server(self, key, servers_pool):
-        total_weight = sum([row.get('SESSION_REDIS_WEIGHT', 1) for row in servers_pool])
+        total_weight = sum([row.get('weight', 1) for row in servers_pool])
         pos = 0
         for i in range(3, -1, -1):
             pos = pos * 2 ** 8 + ord(key[i])
@@ -49,9 +49,9 @@ class RedisServer():
         server_key = 0
         i = 0
         while i < total_weight:
-            if i <= pos < (i + server.get('SESSION_REDIS_WEIGHT', 1)):
+            if i <= pos < (i + server.get('weight', 1)):
                 return server_key, server
-            i += server.get('SESSION_REDIS_WEIGHT', 1)
+            i += server.get('weight', 1)
             server = next(pool)
             server_key += 1
 
@@ -67,8 +67,8 @@ class RedisServer():
                 settings.SESSION_REDIS_SENTINEL_LIST,
                 socket_timeout=settings.SESSION_REDIS_SOCKET_TIMEOUT,
                 retry_on_timeout=settings.SESSION_REDIS_RETRY_ON_TIMEOUT,
-                db=getattr(settings, 'SESSION_REDIS_DB', 0),
-                password=getattr(settings, 'SESSION_REDIS_PASSWORD', None)
+                db=getattr(settings, 'db', 0),
+                password=getattr(settings, 'password', None)
             ).master_for(settings.SESSION_REDIS_SENTINEL_MASTER_ALIAS)
 
         elif self.connection_type == 'redis_url':

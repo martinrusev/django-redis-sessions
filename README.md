@@ -31,12 +31,12 @@ Available Settings
 
 ```
 SESSION_REDIS = {
-    'HOST': 'localhost'
-    'PORT': 6379
-    'REDIS_DB': 0,
-    'PASSWORD': 'password',
-    'PREFIX': 'session',
-    'SOCKET_TIMEOUT': 1
+    'host': 'localhost'
+    'port': 6379
+    'redis_db': 0,
+    'password': 'password',
+    'prefix': 'session',
+    'socket_timeout': 1
 }
 ```
 
@@ -44,11 +44,11 @@ If you prefer domain socket connection,  you can just add this line instead of H
 
 ```
 SESSION_REDIS = {
-    'UNIX_DOMAIN_SOCKET_PATH': '/var/run/redis/redis.sock',
-    'REDIS_DB': 0,
-    'PASSWORD': 'password',
-    'PREFIX': 'session',
-    'SOCKET_TIMEOUT': 1
+    'unix_domain_socket_path': '/var/run/redis/redis.sock',
+    'redis_db': 0,
+    'password': 'password',
+    'prefix': 'session',
+    'socket_timeout': 1
 }
 ```
 
@@ -71,38 +71,36 @@ You can configure the connection type for each Redis instance in the pool (host/
 
 ```
 SESSION_REDIS = {
-    'PREFIX': 'session',
-    'SOCKET_TIMEOUT': 1
-    'RETRY_ON_TIMEOUT': False,
-    'POOL': [
-        {
-            'HOST': 'localhost3',
-            'PORT': 6379,
-            'DB': 0,
-            'PASSWORD': None,
-            'UNIX_DOMAIN_SOCKET_PATH': None,
-            'URL': None,
-            'WEIGHT': 1
-        },
-        {
-            'HOST': 'localhost2',
-            'PORT': 6379,
-            'DB': 0,
-            'PASSWORD': None,
-            'UNIX_DOMAIN_SOCKET_PATH': None,
-            'URL': None,
-            'WEIGHT': 1,
+    'prefix': 'session',
+    'socket_timeout': 1
+    'retry_on_timeout': False,
+    'pool': [{
+        'host': 'localhost3',
+        'port': 6379,
+        'db': 0,
+        'password': None,
+        'unix_domain_socket_path': None,
+        'url': None,
+        'weight': 1
     },
     {
-            'HOST': 'localhost1',
-            'PORT': 6379,
-            'DB': 0,
-            'PASSWORD': None,
-            'UNIX_DOMAIN_SOCKET_PATH': None,
-            'URL': None,
-            'WEIGHT': 1,
-    }
-    ]
+        'host': 'localhost2',
+        'port': 6379,
+        'db': 0,
+        'password': None,
+        'unix_domain_socket_path': None,
+        'url': None,
+        'weight': 1
+    },
+    {
+        'host': 'localhost1',
+        'port': 6379,
+        'db': 0,
+        'password': None,
+        'unix_domain_socket_path': None,
+        'url': None,
+        'weight': 1
+    }]
 }
 ```
 
