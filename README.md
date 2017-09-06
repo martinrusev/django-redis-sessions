@@ -6,6 +6,12 @@ Redis database backend for your sessions
 [![Build Status](https://travis-ci.org/martinrusev/django-redis-sessions.svg?branch=master)](https://travis-ci.org/martinrusev/django-redis-sessions)
 
 
+
+-  [Installation](#installation)
+-  [Available Settings](#available-settings)
+-  [Changelog](#changelog)
+
+
 Installation
 ============
 
