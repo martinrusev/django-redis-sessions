@@ -111,20 +111,20 @@ def test_one_connection_is_used():
 def test_redis_pool_server_select():
     servers = [
         {
-            'SESSION_REDIS_HOST': 'localhost2',
-            'SESSION_REDIS_PORT': 6379,
-            'SESSION_REDIS_DB': 0,
-            'SESSION_REDIS_PASSWORD': None,
-            'SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH': None,
-            'SESSION_REDIS_WEIGHT': 1,
+            'HOST': 'localhost2',
+            'PORT': 6379,
+            'DB': 0,
+            'PASSWORD': None,
+            'UNIX_DOMAIN_SOCKET_PATH': None,
+            'WEIGHT': 1,
         },
         {
-            'SESSION_REDIS_HOST': 'localhost1',
-            'SESSION_REDIS_PORT': 6379,
-            'SESSION_REDIS_DB': 0,
-            'SESSION_REDIS_PASSWORD': None,
-            'SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH': None,
-            'SESSION_REDIS_WEIGHT': 1,
+            'HOST': 'localhost1',
+            'PORT': 6379,
+            'DB': 0,
+            'PASSWORD': None,
+            'UNIX_DOMAIN_SOCKET_PATH': None,
+            'WEIGHT': 1,
         },
     ]
 

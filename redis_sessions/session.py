@@ -21,13 +21,12 @@ class RedisServer():
             if settings.SESSION_REDIS_POOL is not None:
                 server_key, server = self.get_server(session_key, settings.SESSION_REDIS_POOL)
                 self.connection_key = str(server_key)
-                settings.SESSION_REDIS_HOST = getattr(server, 'SESSION_REDIS_HOST', 'localhost')
-                settings.SESSION_REDIS_PORT = getattr(server, 'SESSION_REDIS_PORT', 6379)
-                settings.SESSION_REDIS_DB = getattr(server, 'SESSION_REDIS_DB', 0)
-                settings.SESSION_REDIS_PASSWORD = getattr(server, 'SESSION_REDIS_PASSWORD', None)
-                settings.SESSION_REDIS_URL = getattr(server, 'SESSION_REDIS_URL', None)
-                settings.SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH = getattr(server,
-                                                                         'SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH', None)
+                settings.SESSION_REDIS_HOST = getattr(server, 'HOST', 'localhost')
+                settings.SESSION_REDIS_PORT = getattr(server, 'PORT', 6379)
+                settings.SESSION_REDIS_DB = getattr(server, 'DB', 0)
+                settings.SESSION_REDIS_PASSWORD = getattr(server, 'PASSWORD', None)
+                settings.SESSION_REDIS_URL = getattr(server, 'URL', None)
+                settings.SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH = getattr(server,'UNIX_DOMAIN_SOCKET_PATH', None)
 
             if settings.SESSION_REDIS_URL is not None:
                 self.connection_type = 'redis_url'
