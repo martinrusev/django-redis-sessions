@@ -108,9 +108,14 @@ class SessionStore(SessionBase):
 
     def load(self):
         try:
-            session_data = self.server.get(
-                self.get_real_stored_key(self._get_or_create_session_key())
-            )
+            exists = self._session_key is not None
+            stored_key = self.get_real_stored_key(self._get_or_create_session_key())
+            session_data = self.server.get(stored_key)
+            if exists:
+                self.server.expire(
+                    stored_key,
+                    self.get_expiry_age(expiry=None)  # expiry=None prevents get_expiry_age() to call load()
+                )
             return self.decode(force_unicode(session_data))
         except:
             self._session_key = None
