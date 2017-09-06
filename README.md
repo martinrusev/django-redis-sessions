@@ -20,7 +20,8 @@ For Django < 1.4 run `pip install django-redis-sessions==0.3`
 SESSION_ENGINE = 'redis_sessions.session'
 ```
 
-* Optional settings:
+Available Settings
+============
 
 ```
 SESSION_REDIS = {
@@ -31,8 +32,9 @@ SESSION_REDIS = {
     'PREFIX': 'session',
     'SOCKET_TIMEOUT': 1
 }
-# If you prefer domain socket connection, 
-# you can just add this line instead of HOST and PORT.
+```
+
+If you prefer domain socket connection,  you can just add this line instead of HOST and PORT.
 
 ```
 SESSION_REDIS = {
@@ -46,13 +48,20 @@ SESSION_REDIS = {
 
 
 
-# Redis Sentinel 
+### Redis Sentinel
+
+``` 
 SESSION_REDIS_SENTINEL_LIST = [(host, port), (host, port), (host, port)]
 SESSION_REDIS_SENTINEL_MASTER_ALIAS = 'sentinel-master'
+```
 
-# Redis Pool (Horizontal partitioning)
-# Splits sessions between Redis instances based on the session key.
-# You can configure the connection type for each Redis instance in the pool (host/port, unix socket, redis url). 
+
+
+### Redis Pool (Horizontal partitioning)
+
+
+Splits sessions between Redis instances based on the session key.
+You can configure the connection type for each Redis instance in the pool (host/port, unix socket, redis url). 
 
 ```
 SESSION_REDIS = {
@@ -100,7 +109,7 @@ Tests
 ```
 $ pip install -r dev_requirements.txt
 # Make sure you have redis running on localhost:6379
-$ nosetests 
+$ nosetests -vv
 ```
 
 # [Changelog](https://github.com/martinrusev/django-redis-sessions/blob/master/CHANGELOG.md)
