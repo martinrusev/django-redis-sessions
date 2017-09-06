@@ -33,7 +33,7 @@ Available Settings
 SESSION_REDIS = {
     'host': 'localhost'
     'port': 6379
-    'redis_db': 0,
+    'db': 0,
     'password': 'password',
     'prefix': 'session',
     'socket_timeout': 1
@@ -45,7 +45,7 @@ If you prefer domain socket connection,  you can just add this line instead of H
 ```
 SESSION_REDIS = {
     'unix_domain_socket_path': '/var/run/redis/redis.sock',
-    'redis_db': 0,
+    'db': 0,
     'password': 'password',
     'prefix': 'session',
     'socket_timeout': 1
