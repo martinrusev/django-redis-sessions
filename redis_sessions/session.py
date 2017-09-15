@@ -76,7 +76,7 @@ class RedisServer():
                 settings.SESSION_REDIS_URL,
                 socket_timeout=settings.SESSION_REDIS_SOCKET_TIMEOUT
             )
-        elif self.connection_type == 'unix_url':
+        elif self.connection_type == 'redis_host':
             self.__redis[self.connection_key] = redis.StrictRedis(
                 host=settings.SESSION_REDIS_HOST,
                 port=settings.SESSION_REDIS_PORT,
@@ -85,7 +85,7 @@ class RedisServer():
                 db=settings.SESSION_REDIS_DB,
                 password=settings.SESSION_REDIS_PASSWORD
             )
-        else:
+        elif self.connection_type == 'redis_unix_url':
             self.__redis[self.connection_key] = redis.StrictRedis(
                 unix_socket_path=settings.SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH,
                 socket_timeout=settings.SESSION_REDIS_SOCKET_TIMEOUT,
