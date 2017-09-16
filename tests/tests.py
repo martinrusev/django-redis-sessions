@@ -1,9 +1,12 @@
+import time
+from random import randint
+
+
+from nose.tools import eq_, assert_false
+
 from redis_sessions.session import SessionStore
 from redis_sessions.session import RedisServer
 from redis_sessions import settings
-import time
-from nose.tools import eq_, assert_false
-from random import randint
 
 
 ##  Dev
@@ -162,6 +165,7 @@ def test_redis_pool_server_select():
     for key in keys2:
         server_key, server = rs.get_server(key, servers)
         eq_(server_key, 0)
+
 
 def test_with_unix_url_config():
     pass

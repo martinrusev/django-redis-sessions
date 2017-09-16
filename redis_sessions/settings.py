@@ -1,8 +1,7 @@
 from django.conf import settings
 
 # SESSION_REDIS - Default
-SESSION_REDIS = settings.get('SESSION_REDIS', {})
-
+SESSION_REDIS = getattr(settings, 'SESSION_REDIS', {})
 
 SESSION_REDIS_HOST = SESSION_REDIS.get('host', 'localhost')
 SESSION_REDIS_PORT = SESSION_REDIS.get('port', 6379)
@@ -13,6 +12,7 @@ SESSION_REDIS_PREFIX = SESSION_REDIS.get('prefix', '')
 SESSION_REDIS_PASSWORD = SESSION_REDIS.get('password', None)
 SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH = SESSION_REDIS.get('unix_domain_socket_path', None)
 SESSION_REDIS_URL = SESSION_REDIS.get('url', None)
+
 
 """
 Should be on the format:
@@ -40,5 +40,5 @@ Should be on the format:
 SESSION_REDIS_POOL = SESSION_REDIS.get('POOL', None)
 
 # should be on the format [(host, port), (host, port), (host, port)]
-SESSION_REDIS_SENTINEL_LIST = settings.get('SESSION_REDIS_SENTINEL_LIST', None)
-SESSION_REDIS_SENTINEL_MASTER_ALIAS = settings.get('SESSION_REDIS_SENTINEL_MASTER_ALIAS', None)
+SESSION_REDIS_SENTINEL_LIST = getattr(settings, 'SESSION_REDIS_SENTINEL_LIST', None)
+SESSION_REDIS_SENTINEL_MASTER_ALIAS = getattr(settings, 'SESSION_REDIS_SENTINEL_MASTER_ALIAS', None)
