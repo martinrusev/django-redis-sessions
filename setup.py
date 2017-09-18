@@ -29,4 +29,5 @@ setup(
         "Framework :: Django",
         "Environment :: Web Environment",
     ],
+    test_suite='tests'
 )
