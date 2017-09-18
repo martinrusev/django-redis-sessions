@@ -19,7 +19,7 @@ For Django < 1.4 run ``pip install django-redis-sessions==0.3``
 
 -  Set ``redis_sessions.session`` as your session engine, like so:
 
-::
+.. code:: python
 
     SESSION_ENGINE = 'redis_sessions.session'
 
