@@ -12,7 +12,7 @@ setup(
     name='django-redis-sessions',
     version=__version__,
     description= "Redis Session Backend For Django",
-    long_description=read("README.md"),
+    long_description=read("README.rst"),
     keywords='django, sessions,',
     author='Martin Rusev',
     author_email='martin@amon.cx',
