@@ -1,12 +1,6 @@
 language: python
 services:
   - redis-server
-python:
-  - "3.6"
-  - "3.5"
-  - "3.4"
-  - "2.7"
-  - "pypy"
 matrix:
   include:
     - python: "3.6"
