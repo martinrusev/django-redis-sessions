@@ -162,6 +162,10 @@ class SessionStore(SessionBase):
         except:
             pass
 
+    @classmethod
+    def clear_expired(cls):
+        pass
+        
     def get_real_stored_key(self, session_key):
         """Return the real key name in redis storage
         @return string
