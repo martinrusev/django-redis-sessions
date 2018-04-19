@@ -8,7 +8,7 @@ BUG FIXES:
 ## 0.6 (6 September 2017)
 
 
-IMPROVEMENTS:
+IMPROVEMENTS / BREAKING CHANGES:
 
  * Dict config: ([#18](https://github.com/martinrusev/django-redis-sessions/issues/18))
 
