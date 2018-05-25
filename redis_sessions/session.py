@@ -6,9 +6,10 @@ except ImportError:  # Python 3.*
     from django.utils.encoding import force_text as force_unicode
 from django.contrib.sessions.backends.base import SessionBase, CreateError
 from redis_sessions import settings
+import base64
 
 
-class RedisServer():
+class RedisServer:
     __redis = {}
 
     def __init__(self, session_key):
@@ -103,13 +104,45 @@ class SessionStore(SessionBase):
     """
     def __init__(self, session_key=None):
         super(SessionStore, self).__init__(session_key)
-        self.server = RedisServer(session_key).get()
+        self.server = self.get_redis_server(session_key)
+
+    # overriding this to support pickle serializer.
+    def __getstate__(self):
+        # capture what is normally pickled.
+        state = self.__dict__.copy()
+
+        # replace the server instance.
+        state['server'] = self.session_key
+
+        return state
+
+    # overriding this to support pickle serializer.
+    def __setstate__(self, new_state):
+        # recreate server instance
+        new_state['server'] = self.get_redis_server(new_state['server'])
+
+        # re-instate our __dict__ state from the pickled state
+        self.__dict__.update(new_state)
+
+    # overriding the default encoding to reduce the amount
+    def encode(self, session_dict):
+        """Returns the given session dictionary serialized and encoded as a string."""
+        serialized = self.serializer().dumps(session_dict)
+        hash = self._hash(serialized)
+        return base64.b64encode(hash.encode() + b":" + serialized)
+
+    @staticmethod
+    def get_redis_server(session_key):
+        return RedisServer(session_key).get()
 
     def load(self):
         try:
             session_data = self.server.get(
                 self.get_real_stored_key(self._get_or_create_session_key())
             )
+            if session_data is None:
+                # force it to session key as none and return empty dict.
+                raise ValueError("session key does not exists.")
             return self.decode(force_unicode(session_data))
         except:
             self._session_key = None
@@ -170,6 +203,13 @@ class SessionStore(SessionBase):
         """Return the real key name in redis storage
         @return string
         """
+
+        # supporting both None and int as session key.
+        if session_key is None:
+            session_key = ''
+        else:
+            session_key = str(session_key)
+
         prefix = settings.SESSION_REDIS_PREFIX
         if not prefix:
             return session_key
