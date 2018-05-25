@@ -16,4 +16,4 @@ matrix:
 install:
   - pip install $DJANGO
   - pip install -q redis
-script: python setup.py nosetests
+script: python manage.py test
