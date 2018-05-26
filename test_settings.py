@@ -57,7 +57,7 @@ TEMPLATES = [
 ]
 
 SESSION_REDIS = {
-        'host': 'redis',
+        'host': os.environ.get('REDIS_HOST', 'localhost'),
         'port': 6379,
         'db': 0,
         'password': '',

@@ -8,6 +8,8 @@ services:
       - ./:/usr/src/app
       - ~/.pypirc:/root/.pypirc
     command: bash -c "python manage.py test"
+    environment:
+      - REDIS_HOST=redis
 
 
   redis:
