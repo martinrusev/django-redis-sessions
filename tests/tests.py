@@ -18,7 +18,12 @@ from django.utils import timezone
 from django.test.utils import override_script_prefix, patch_logger
 from unittest import skip
 import pickle as pypickle
-import cPickle as cpickle
+import six
+
+if six.PY3:
+    import _pickle as cPickle
+else:
+    import cPickle as cpickle
 
 
 #### Hack hack hack ########
