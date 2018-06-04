@@ -30,11 +30,11 @@ class RedisServer():
 
             if settings.SESSION_REDIS_URL is not None:
                 self.connection_type = 'redis_url'
-            elif settings.SESSION_REDIS_HOST is not None:
-                self.connection_type = 'redis_host'
             elif settings.SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH is not None:
                 self.connection_type = 'redis_unix_url'
-
+            elif settings.SESSION_REDIS_HOST is not None:
+                self.connection_type = 'redis_host'
+            
         self.connection_key += self.connection_type
 
     def get_server(self, key, servers_pool):
