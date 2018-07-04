@@ -16,7 +16,8 @@ class RedisServer:
     def __init__(self, session_key, fbp=False):
         self.session_key = session_key
         self.connection_key = ''
-        if fbp: settings = settings_fbp
+        if fbp:
+            settings = settings_fbp
 
         if settings.SESSION_REDIS_SENTINEL_LIST is not None:
             self.connection_type = 'sentinel'
