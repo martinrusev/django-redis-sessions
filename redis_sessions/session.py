@@ -13,10 +13,10 @@ import base64
 class RedisServer:
     __redis = {}
 
-    def __init__(self, session_key, fbp=False):
+    def __init__(self, session_key, use_alternative_store=False):
         self.session_key = session_key
         self.connection_key = ''
-        if fbp:
+        if use_alternative_store:
             settings = settings_fbp
 
         if settings.SESSION_REDIS_SENTINEL_LIST is not None:
@@ -105,9 +105,9 @@ class SessionStore(SessionBase):
     """
     Implements Redis database session store.
     """
-    def __init__(self, session_key=None):
+    def __init__(self, session_key=None, use_alternative_store=False):
         super(SessionStore, self).__init__(session_key)
-        self.server = self.get_redis_server(session_key)
+        self.server = self.get_redis_server(session_key, use_alternative_store)
 
     # overriding this to support pickle serializer.
     def __getstate__(self):
@@ -135,8 +135,8 @@ class SessionStore(SessionBase):
         return base64.b64encode(hash.encode() + b":" + serialized)
 
     @staticmethod
-    def get_redis_server(session_key):
-        return RedisServer(session_key).get()
+    def get_redis_server(session_key, use_alternative_store):
+        return RedisServer(session_key, use_alternative_store).get()
 
     def load(self):
         try:
