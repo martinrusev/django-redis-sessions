@@ -6,15 +6,17 @@ except ImportError:  # Python 3.*
     from django.utils.encoding import force_text as force_unicode
 from django.contrib.sessions.backends.base import SessionBase, CreateError
 from redis_sessions import settings
+from redis_sessions import settings_fbp
 import base64
 
 
 class RedisServer:
     __redis = {}
 
-    def __init__(self, session_key):
+    def __init__(self, session_key, fbp=False):
         self.session_key = session_key
         self.connection_key = ''
+        if fbp: settings = settings_fbp
 
         if settings.SESSION_REDIS_SENTINEL_LIST is not None:
             self.connection_type = 'sentinel'
