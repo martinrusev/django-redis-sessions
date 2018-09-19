@@ -34,8 +34,9 @@ Available Settings
         'db': 0,
         'password': 'password',
         'prefix': 'session',
-        'socket_timeout': 1
-    }
+        'socket_timeout': 1,
+        'retry_on_timeout': False
+        }
 
 If you prefer domain socket connection, you can just add this line
 instead of HOST and PORT.
@@ -47,7 +48,8 @@ instead of HOST and PORT.
         'db': 0,
         'password': 'password',
         'prefix': 'session',
-        'socket_timeout': 1
+        'socket_timeout': 1,
+        'retry_on_timeout': False
     }
 
 Redis Sentinel
