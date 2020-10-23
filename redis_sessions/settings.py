@@ -2,7 +2,7 @@ from django.conf import settings
 
 # SESSION_REDIS - Default
 SESSION_REDIS = getattr(settings, 'SESSION_REDIS', {})
-SESSION_REDIS_CONNECTION_OBJECT = SESSION_REDIS.get('redis_connection_object', None)
+SESSION_REDIS_CONNECTION_OBJECT = getattr(settings, 'SESSION_REDIS_CONNECTION_OBJECT', None)
 SESSION_REDIS_HOST = SESSION_REDIS.get('host', 'localhost')
 SESSION_REDIS_PORT = SESSION_REDIS.get('port', 6379)
 SESSION_REDIS_SOCKET_TIMEOUT = SESSION_REDIS.get('socket_timeout', 0.1)
