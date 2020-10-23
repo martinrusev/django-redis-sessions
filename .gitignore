@@ -9,3 +9,6 @@ dist
 *.egg
 .idea
 *.sublime*
+*.swp
+virtualenv
+venv

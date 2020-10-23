@@ -17,6 +17,8 @@ class RedisServer():
 
         if settings.SESSION_REDIS_SENTINEL_LIST is not None:
             self.connection_type = 'sentinel'
+        if settings.SESSION_REDIS_CONNECTION_OBJECT is not None:
+            self.connection_type = 'connection_object'
         else:
             if settings.SESSION_REDIS_POOL is not None:
                 server_key, server = self.get_server(session_key, settings.SESSION_REDIS_POOL)
@@ -34,7 +36,7 @@ class RedisServer():
                 self.connection_type = 'redis_unix_url'
             elif settings.SESSION_REDIS_HOST is not None:
                 self.connection_type = 'redis_host'
-            
+
         self.connection_key += self.connection_type
 
     def get_server(self, key, servers_pool):
@@ -61,7 +63,9 @@ class RedisServer():
         if self.connection_key in self.__redis:
             return self.__redis[self.connection_key]
 
-        if self.connection_type == 'sentinel':
+        if self.connection_type == 'connection_object':
+            self.__redis[self.connection_key] = settings.SESSION_REDIS_CONNECTION_OBJECT
+        elif self.connection_type == 'sentinel':
             from redis.sentinel import Sentinel
             self.__redis[self.connection_key] = Sentinel(
                 settings.SESSION_REDIS_SENTINEL_LIST,
@@ -165,7 +169,7 @@ class SessionStore(SessionBase):
     @classmethod
     def clear_expired(cls):
         pass
-        
+
     def get_real_stored_key(self, session_key):
         """Return the real key name in redis storage
         @return string
