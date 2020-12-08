@@ -167,11 +167,32 @@ def test_redis_pool_server_select():
         eq_(server_key, 0)
 
 
+def test_redis_connection_object():
+    settings.SESSION_REDIS_CONNECTION_OBJECT = redis.StrictRedis(
+        host='redis',
+        port=1234,
+        db=12,
+    )
+
+    from redis_sessions.session import SessionStore
+
+    redis_session = SessionStore()
+    server = redis_session.server
+
+    host = server.connection_pool.connection_kwargs.get('host')
+    port = server.connection_pool.connection_kwargs.get('port')
+    db = server.connection_pool.connection_kwargs.get('db')
+
+    eq_(host, 'redis')
+    eq_(port, 1234)
+    eq_(db, 12)
+
+
 def test_with_unix_url_config():
     pass
 
     # Uncomment this in `redis.conf`:
-    # 
+    #
     # unixsocket /tmp/redis.sock
     # unixsocketperm 755
 
