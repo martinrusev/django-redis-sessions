@@ -59,6 +59,11 @@ Redis Sentinel
 
     SESSION_REDIS_SENTINEL_LIST = [(host, port), (host, port), (host, port)]
     SESSION_REDIS_SENTINEL_MASTER_ALIAS = 'sentinel-master'
+    SESSION_REDIS = {
+    'password': 'NMHmmgwauALmOk5TIt5kqYiLnugcMn7V',
+    'db': 0,
+    'prefix': 'session'
+     }
 
 Redis Pool (Horizontal partitioning)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

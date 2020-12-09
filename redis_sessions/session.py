@@ -71,8 +71,8 @@ class RedisServer():
                 settings.SESSION_REDIS_SENTINEL_LIST,
                 socket_timeout=settings.SESSION_REDIS_SOCKET_TIMEOUT,
                 retry_on_timeout=settings.SESSION_REDIS_RETRY_ON_TIMEOUT,
-                db=getattr(settings, 'SESSION_REDIS_DB', 0),
-                password=getattr(settings, 'SESSION_REDIS_PASSWORD', None)
+                db=settings.SESSION_REDIS.get('db', 0),
+                password=settings.SESSION_REDIS.get('password', None)
             ).master_for(settings.SESSION_REDIS_SENTINEL_MASTER_ALIAS)
 
         elif self.connection_type == 'redis_url':
