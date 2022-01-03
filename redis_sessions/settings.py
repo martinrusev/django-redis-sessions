@@ -42,3 +42,5 @@ SESSION_REDIS_POOL = SESSION_REDIS.get('POOL', None)
 # should be on the format [(host, port), (host, port), (host, port)]
 SESSION_REDIS_SENTINEL_LIST = getattr(settings, 'SESSION_REDIS_SENTINEL_LIST', None)
 SESSION_REDIS_SENTINEL_MASTER_ALIAS = getattr(settings, 'SESSION_REDIS_SENTINEL_MASTER_ALIAS', None)
+SESSION_REDIS_USE_SSL = getattr(settings, 'SESSION_REDIS_USE_SSL', False)
+SESSION_REDIS_SSL_CA_CERT_PATH = getattr(settings, 'SESSION_REDIS_SSL_CA_CERT_PATH', None)

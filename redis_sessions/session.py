@@ -1,5 +1,7 @@
 import redis
 
+from redis_sessions.exceptions import ImproperlyConfigured
+
 try:
     from django.utils.encoding import force_unicode
 except ImportError:  # Python 3.*
@@ -8,7 +10,7 @@ from django.contrib.sessions.backends.base import SessionBase, CreateError
 from redis_sessions import settings
 
 
-class RedisServer():
+class RedisServer:
     __redis = {}
 
     def __init__(self, session_key):
@@ -67,13 +69,30 @@ class RedisServer():
             self.__redis[self.connection_key] = settings.SESSION_REDIS_CONNECTION_OBJECT
         elif self.connection_type == 'sentinel':
             from redis.sentinel import Sentinel
-            self.__redis[self.connection_key] = Sentinel(
-                settings.SESSION_REDIS_SENTINEL_LIST,
-                socket_timeout=settings.SESSION_REDIS_SOCKET_TIMEOUT,
-                retry_on_timeout=settings.SESSION_REDIS_RETRY_ON_TIMEOUT,
-                db=getattr(settings, 'SESSION_REDIS_DB', 0),
-                password=getattr(settings, 'SESSION_REDIS_PASSWORD', None)
-            ).master_for(settings.SESSION_REDIS_SENTINEL_MASTER_ALIAS)
+            is_ssl_connection: bool = settings.SESSION_REDIS_USE_SSL
+            if is_ssl_connection:
+                ssl_ca_cert_path: str = settings.SESSION_REDIS_SSL_CA_CERT_PATH
+                if not ssl_ca_cert_path:
+                    raise ImproperlyConfigured(
+                        "`SESSION_REDIS_SSL_CA_CERT_PATH` is not set. In SSL mode you must specify certificate path."
+                    )
+                self.__redis[self.connection_key] = Sentinel(
+                    sentinels=settings.SESSION_REDIS_SENTINEL_LIST,
+                    socket_timeout=settings.SESSION_REDIS_SOCKET_TIMEOUT,
+                    retry_on_timeout=settings.SESSION_REDIS_RETRY_ON_TIMEOUT,
+                    db=getattr(settings, 'SESSION_REDIS_DB', 0),
+                    password=getattr(settings, 'SESSION_REDIS_PASSWORD', None),
+                    ssl=True,
+                    ssl_ca_certs=ssl_ca_cert_path,
+                ).master_for(service_name=settings.SESSION_REDIS_SENTINEL_MASTER_ALIAS)
+            else:
+                self.__redis[self.connection_key] = Sentinel(
+                    sentinels=settings.SESSION_REDIS_SENTINEL_LIST,
+                    socket_timeout=settings.SESSION_REDIS_SOCKET_TIMEOUT,
+                    retry_on_timeout=settings.SESSION_REDIS_RETRY_ON_TIMEOUT,
+                    db=getattr(settings, 'SESSION_REDIS_DB', 0),
+                    password=getattr(settings, 'SESSION_REDIS_PASSWORD', None)
+                ).master_for(service_name=settings.SESSION_REDIS_SENTINEL_MASTER_ALIAS)
 
         elif self.connection_type == 'redis_url':
             self.__redis[self.connection_key] = redis.StrictRedis.from_url(

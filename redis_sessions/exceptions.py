@@ -1,0 +1,3 @@
+class ImproperlyConfigured(Exception):
+    """Django Sessions is somehow improperly configured."""
+    ...
