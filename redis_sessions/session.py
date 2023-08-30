@@ -125,13 +125,17 @@ class SessionStore(SessionBase):
 
     def load(self):
         try:
-            session_data = self.server.get(
-                self.get_real_stored_key(self._get_or_create_session_key())
-            )
+            session_key = self._get_or_create_session_key()
+            real_stored_session_key = self.get_real_stored_key(session_key)
+            session_data = self.server.get(real_stored_session_key)
+        except Exception:
+            session_data = None
+
+        if session_data is not None:
             return self.decode(force_unicode(session_data))
-        except:
-            self._session_key = None
-            return {}
+
+        self._session_key = None
+        return {}
 
     def exists(self, session_key):
         return self.server.exists(self.get_real_stored_key(session_key))
